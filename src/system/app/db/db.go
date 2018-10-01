@@ -17,7 +17,7 @@ func Init() *sql.DB {
 func Insert(name string, mail string, age string) string {
 	d := Init()
 	defer d.Close()
-	insert, err := d.Query("INSERT INTO Users VALUES ('NULL', '" + name + "', '" + mail + "', '" + age + "')")
+	insert, err := d.Query("INSERT INTO Users VALUES ('NULL', ?, ?, ?)", name, mail, age)
 	if err != nil {
 		panic(err.Error())
 	}
