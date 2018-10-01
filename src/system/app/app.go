@@ -3,6 +3,8 @@ package app
 import (
 	"log"
 	"net/http"
+
+	"./routes"
 )
 
 type Server struct {
@@ -19,6 +21,8 @@ func (s *Server) Init() {
 }
 
 func (s *Server) Start() {
+	r := routes.NewRouter()
 	log.Println("Starting server")
+	http.Handle("/", r.Router)
 	http.ListenAndServe(s.port, nil)
 }
