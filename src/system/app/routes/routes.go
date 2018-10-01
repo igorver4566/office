@@ -12,7 +12,6 @@ type Router struct {
 
 //NewRouter funcion for create some routes
 func NewRouter() (r Router) {
-
 	r.Router = mux.NewRouter()
 	r.Router.HandleFunc("/hello", contr.HelloController)
 	return

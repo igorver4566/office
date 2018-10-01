@@ -1,11 +1,9 @@
 package app
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
-	"./db"
 	"./routes"
 )
 
@@ -25,16 +23,6 @@ func (s *Server) Init() {
 func (s *Server) Start() {
 	r := routes.NewRouter()
 	log.Println("Starting server")
-
-	Db := db.InitDb()
-	defer Db.Close()
-	fmt.Println("Connected")
-	insert, err := Db.Query("INSERT INTO Users VALUES ('NULL','Игорь', '12@test.com', '21')")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer insert.Close()
-	fmt.Println("Writed")
 
 	http.Handle("/", r.Router)
 	http.ListenAndServe(s.port, nil)
