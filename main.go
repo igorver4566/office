@@ -1,5 +1,12 @@
 package main
 
+import (
+	"./src/system/app"
+)
+
 func main() {
-	println("Hello")
+	s := app.NewServer()
+
+	s.Init()
+	s.Start()
 }
