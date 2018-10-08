@@ -7,7 +7,7 @@
                 <v-toolbar-title>Вход</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
-                <v-form ref="form" v-model="valid" validation>
+                <v-form ref="form" v-model="valid" lazy-validation>
                   <v-text-field 
                     prepend-icon="person" 
                     name="login" 
@@ -44,7 +44,7 @@
                   color="primary" 
                   @click="onSubmit"
                   :disabled="!valid"
-                >Login</v-btn>
+                >Зарегистрироваться</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -58,6 +58,7 @@
       return {
         login: '',
         password: '',
+        confirmPassword: '',
         valid: false,
         loginRules: [
           v => !!v || 'Login is required'

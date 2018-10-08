@@ -8,7 +8,9 @@
       <v-toolbar-side-icon
         @click="drawer = !drawer"
       ></v-toolbar-side-icon>
-      <v-toolbar-title>SoftSetters</v-toolbar-title>
+      <v-toolbar-title>
+        <router-link to="/" tag="span" class="pointer">SoftSetters</router-link>
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn 
@@ -39,3 +41,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .pointer {
+    cursor: pointer;
+  }
+</style>
+
+
