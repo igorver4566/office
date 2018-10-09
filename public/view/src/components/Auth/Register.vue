@@ -7,6 +7,7 @@
                 <v-toolbar-title>Вход</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
+                <span class="red-span" >{{this.submit}}</span>
                 <v-form ref="form" v-model="valid" lazy-validation>
                   <v-text-field 
                     prepend-icon="person" 
@@ -15,6 +16,15 @@
                     label="Логин" 
                     type="text" 
                     v-model="login" 
+                    required
+                  ></v-text-field>
+                  <v-text-field 
+                    prepend-icon="person" 
+                    name="email" 
+                    :rules="emailRules"
+                    label="Эл. почта" 
+                    type="text" 
+                    v-model="email" 
                     required
                   ></v-text-field>
                   <v-text-field 
@@ -53,13 +63,16 @@
 </template>
 
 <script>
+  import {Registration} from '@/api/hostsetting.js'
   export default {
     data () {
       return {
         login: '',
         password: '',
         confirmPassword: '',
+        email: '',
         valid: false,
+        submit: '',
         loginRules: [
           v => !!v || 'Login is required'
         ],
@@ -70,6 +83,10 @@
         confirmPasswordRules: [
           v => !!v || 'Password is required',
           v => v === this.password || 'Пароли должны совпадать'
+        ],
+        emailRules: [
+          v => !!v || 'E-mail is required',
+          v => /.+@.+/.test(v) || 'E-mail must be valid'
         ]
       }
     },
@@ -78,11 +95,22 @@
         if (this.$refs.form.validate()) {
           const user = {
             login: this.login,
-            password: this.password
+            password: this.password,
+            email: this.email
           }
-          console.log(user)
+          Registration(user.login, user.password, user.email)
+          .then((res) => {
+            this.submit = res
+          })
         }
       }
     }
   }
 </script>
+
+<style scoped>
+  .red-span {
+    color: red;
+  }
+</style>
+
