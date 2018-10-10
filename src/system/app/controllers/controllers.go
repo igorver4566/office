@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"../db"
 )
@@ -33,12 +32,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(user.Login, user.Password)
-
-	if strings.ToLower(user.Login) != "alexcons" {
-		if user.Password != "kappa123" {
-			fmt.Println("Error logging in")
-			return
-		}
-	}
+	login := user.CheckUser()
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(login)
 }

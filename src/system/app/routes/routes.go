@@ -14,7 +14,7 @@ type Router struct {
 func NewRouter() (r Router) {
 	r.Router = mux.NewRouter()
 
-	r.Router.HandleFunc("/app/register", contr.RegisterHandler).Methods("POST")
-	r.Router.HandleFunc("/app/login", contr.LoginHandler)
+	r.Router.HandleFunc("/api/register", contr.RegisterHandler).Methods("POST")
+	r.Router.HandleFunc("/api/login", contr.LoginHandler)
 	return
 }

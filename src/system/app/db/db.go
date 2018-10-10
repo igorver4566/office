@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 
 	"../auth"
 	_ "github.com/go-sql-driver/mysql"
@@ -16,16 +15,15 @@ type UserCredentials struct {
 }
 
 type User struct {
-	ID       int    `json:"id"`
-	Login    string `json:"login"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
-	Name     string `json:"name"`
-	Phone    string `json:"phone"`
-	RoleID   int    `json:"roleId"`
-	Block    int8   `json:"block"`
-	Address  string `json:"address"`
-	Img      string `json:"img"`
+	ID      int    `json:"id"`
+	Login   string `json:"login"`
+	Email   string `json:"email"`
+	Name    string `json:"name"`
+	Phone   string `json:"phone"`
+	RoleID  int    `json:"roleId"`
+	Block   int8   `json:"block"`
+	Address string `json:"address"`
+	Img     string `json:"img"`
 }
 
 func UserCredential() UserCredentials {
@@ -65,7 +63,6 @@ func (user *UserCredentials) RegisterUser() []byte {
 	}
 	defer exists.Close()
 	_ = exists.QueryRow(user.Login, user.Email).Scan(&id)
-	fmt.Println("id -----> ", id)
 	if id == 0 {
 		cost := bcrypt.DefaultCost
 		hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), cost)
@@ -80,5 +77,33 @@ func (user *UserCredentials) RegisterUser() []byte {
 		strerr = auth.JsonResponse(str)
 	}
 
+	return strerr
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
+func (user *UserCredentials) CheckUser() []byte {
+	var id int
+	var pass string
+	var strerr []byte
+	d := Init()
+	defer d.Close()
+	exists, err := d.Prepare("SELECT id, password FROM users WHERE (login = ?)")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer exists.Close()
+	err = exists.QueryRow(user.Login).Scan(&id, &pass)
+	if err == nil && CheckPasswordHash(user.Password, pass) {
+		strerr = auth.Auth(id)
+	} else {
+		var str auth.Token
+		str.Ok = "false"
+		str.Token = "Неправильный логин или пароль"
+		strerr = auth.JsonResponse(str)
+	}
 	return strerr
 }

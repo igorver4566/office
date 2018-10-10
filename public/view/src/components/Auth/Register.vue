@@ -108,9 +108,8 @@
   }
 </script>
 
-<style scoped>
+<style>
   .red-span {
     color: red;
   }
 </style>
-
