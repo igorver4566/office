@@ -44,8 +44,9 @@ func Auth(id int) []byte {
 	var str Token
 	initKeys()
 	signer := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), jwt.MapClaims{
-		"id":  id,
-		"exp": time.Now().Add(time.Minute * 20).Unix(),
+		"id":   id,
+		"role": "admin",
+		"exp":  time.Now().Add(time.Minute * 20).Unix(),
 	})
 	tokenString, err := signer.SignedString(SignKey)
 	if err != nil {
@@ -80,6 +81,21 @@ func ValidateTokenMiddleware(w http.ResponseWriter, r *http.Request, next http.H
 func JsonResponse(response interface{}) []byte {
 
 	json, err := json.Marshal(response)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return json
+}
+
+func JsonResponseByVar(ok string, data string) []byte {
+	var res struct {
+		Ok   string `json:"ok"`
+		Data string `json:"data"`
+	}
+	res.Ok = ok
+	res.Data = data
+	json, err := json.Marshal(res)
 	if err != nil {
 		panic(err.Error())
 	}

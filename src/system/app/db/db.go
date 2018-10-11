@@ -38,6 +38,7 @@ func Init() *sql.DB {
 	}
 	return Db
 }
+
 func NewUser(login string, hash []byte, email string) []byte {
 	var id int
 	d := Init()
