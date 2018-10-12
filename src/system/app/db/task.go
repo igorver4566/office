@@ -27,7 +27,7 @@ func (task *Task) NewTask() []byte {
 	var id int
 	d := Init()
 	defer d.Close()
-	insert, err := d.Prepare("INSERT INTO task VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	insert, err := d.Prepare("INSERT INTO task VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -42,8 +42,7 @@ func (task *Task) NewTask() []byte {
 		task.Tags,
 		task.MakeSlack,
 		task.Message,
-		task.NameSlack,
-		task.StatusID).Scan(&id)
+		task.NameSlack).Scan(&id)
 	if err != nil {
 		str = auth.JsonResponseByVar("false", "Ошибка при создании задачи")
 		panic(err.Error())
