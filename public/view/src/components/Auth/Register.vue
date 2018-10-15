@@ -7,7 +7,7 @@
                 <v-toolbar-title>Вход</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
-                <span class="red-span" >{{this.submit}}</span>
+                <span class="red-span" >{{error}}</span>
                 <v-form ref="form" v-model="valid" lazy-validation>
                   <v-text-field 
                     prepend-icon="person" 
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-  import {Registration} from '@/api/hostsetting.js'
+  
   export default {
     data () {
       return {
@@ -72,7 +72,6 @@
         confirmPassword: '',
         email: '',
         valid: false,
-        submit: '',
         loginRules: [
           v => !!v || 'Login is required'
         ],
@@ -90,6 +89,11 @@
         ]
       }
     },
+    computed: {
+      error () {
+        return this.$store.getters.error
+      }
+    },
     methods: {
       onSubmit () {
         if (this.$refs.form.validate()) {
@@ -98,10 +102,11 @@
             password: this.password,
             email: this.email
           }
-          Registration(user.login, user.password, user.email)
-          .then((res) => {
-            this.submit = res
-          })
+          this.$store.dispatch('register', user)
+            .then(() => {
+              this.$router.push('/')
+            })
+            .catch(() => {})
         }
       }
     }

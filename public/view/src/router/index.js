@@ -30,5 +30,6 @@ export default new Router({
       name: 'make_task',
       component: MakeTask
     }
-  ]
+  ],
+  mode: 'history'
 })

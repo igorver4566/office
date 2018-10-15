@@ -7,7 +7,7 @@
                 <v-toolbar-title>Вход</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
-                <span class="red-span" >{{this.submit}}</span>
+                <span class="red-span" >{{error}}</span>
                 <v-form ref="form" v-model="valid" validation>
                   <v-text-field 
                     prepend-icon="person" 
@@ -44,14 +44,12 @@
 </template>
 
 <script>
-  import {Login} from '@/api/hostsetting.js'
   export default {
     data () {
       return {
         login: '',
         password: '',
         valid: false,
-        submit: '',
         loginRules: [
           v => !!v || 'Login is required'
         ],
@@ -61,6 +59,11 @@
         ]
       }
     },
+    computed: {
+      error () {
+        return this.$store.getters.error
+      }
+    },
     methods: {
       onSubmit () {
         if (this.$refs.form.validate()) {
@@ -68,10 +71,11 @@
             login: this.login,
             password: this.password
           }
-          Login(user.login, user.password)
-          .then((res) => {
-            this.submit = res
-          })
+          this.$store.dispatch('auth', user)
+            .then(() => {
+              this.$router.push('/')
+            })
+            .catch(() => {})
         }
       }
     }

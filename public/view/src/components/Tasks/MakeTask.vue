@@ -174,7 +174,7 @@
 
                     <v-btn
                     color="primary"
-                    
+                    @click="onSubmit()"
                     >
                     Создать
                     </v-btn>
@@ -192,11 +192,24 @@
   export default {
     data () {
       return {
-        e1: 0
+        e1: 0,
+        name: '',
+        manager: '',
+        access: '',
+        owner: '',
+        developer: '',
+        time_manage: '',
+        time_dev: '',
+        price: '',
+        tags: '',
+        make_slack: false,
+        message: ''
       }
     },
     methods: {
-      onSubmit () {}
+      onSubmit () {
+        console.log(this.name, this.make_slack, this.time_dev)
+      }
     }
   }
 </script>
