@@ -1,8 +1,8 @@
-import {Registration, Login} from '@/api/hostsetting.js'
+import {Registration, Login, SetCookie, GetCookie} from '@/api/hostsetting.js'
 
 export default {
   state: {
-    user: null,
+    user: GetCookie || null,
     userError: null
   },
   mutations: {
@@ -24,6 +24,7 @@ export default {
         .then(function (response) {
           if (response.data.ok === 'true') {
             commit('setToken', response.data.token)
+            SetCookie(response.data.token)
           } else {
             commit('setError', response.data.token)
             return reject(response.data.token)
@@ -43,6 +44,7 @@ export default {
         .then(function (response) {
           if (response.data.ok === 'true') {
             commit('setToken', response.data.token)
+            SetCookie(response.data.token)
           } else {
             commit('setError', response.data.token)
             return reject(response.data.token)

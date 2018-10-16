@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 export const Settings = {
   host: 'http://localhost:8080/'
@@ -17,4 +18,12 @@ export function Login (name, pass, mail) {
     login: name,
     password: pass
   })
+}
+
+export function SetCookie (token) {
+  Cookies.set('Authorization', token)
+}
+
+export function GetCookie () {
+  return Cookies.get('api.example.com')
 }
