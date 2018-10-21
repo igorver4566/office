@@ -16,5 +16,8 @@ func NewRouter() (r Router) {
 
 	r.Router.HandleFunc("/api/register", controller.RegisterHandler).Methods("POST")
 	r.Router.HandleFunc("/api/login", controller.LoginHandler).Methods("POST")
+	r.Router.HandleFunc("/api/check-token/{token}", controller.CheckToken).Methods("GET")
+	r.Router.HandleFunc("/api/tasks/make", controller.MakeTask).Methods("POST")
+	r.Router.HandleFunc("/api/tasks/make", controller.GetTaskForm).Methods("GET")
 	return
 }

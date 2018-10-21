@@ -13,11 +13,20 @@ export function Registration (name, pass, mail) {
   })
 }
 
-export function Login (name, pass, mail) {
+export function Login (name, pass) {
   return axios.post(Settings.host + 'api/login', {
     login: name,
     password: pass
   })
+}
+
+export function GetFormTask () {
+  return axios.get(Settings.host + 'api/tasks/make')
+}
+
+export function MakeNewTask (obj) {
+  console.log(obj)
+  return axios.post(Settings.host + 'api/tasks/make', obj)
 }
 
 export function SetCookie (token) {
@@ -25,5 +34,5 @@ export function SetCookie (token) {
 }
 
 export function GetCookie () {
-  return Cookies.get('api.example.com')
+  return axios.get(Settings.host + 'api/check-token/' + Cookies.get('Authorization'))
 }

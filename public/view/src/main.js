@@ -15,5 +15,8 @@ new Vue({
   router,
   store,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+  created () {
+    this.$store.dispatch('checkToken')
+  }
 })

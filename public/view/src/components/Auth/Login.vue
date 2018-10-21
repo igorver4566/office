@@ -7,7 +7,6 @@
                 <v-toolbar-title>Вход</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
-                <span class="red-span" >{{error}}</span>
                 <v-form ref="form" v-model="valid" validation>
                   <v-text-field 
                     prepend-icon="person" 
@@ -57,11 +56,6 @@
           v => !!v || 'Password is required',
           v => (v && v.length) >= 6 || 'Password must be equal or more than 6 characters'
         ]
-      }
-    },
-    computed: {
-      error () {
-        return this.$store.getters.error
       }
     },
     methods: {

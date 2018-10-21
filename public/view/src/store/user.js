@@ -2,23 +2,16 @@ import {Registration, Login, SetCookie, GetCookie} from '@/api/hostsetting.js'
 
 export default {
   state: {
-    user: GetCookie || null,
-    userError: null
+    user: null
   },
   mutations: {
     setToken (state, token) {
       state.user = token
-    },
-    setError (state, err) {
-      state.userError = err
-    },
-    clearError (state) {
-      state.userError = null
     }
   },
   actions: {
     register ({commit}, payload) {
-      commit('clearError')
+      commit('clearErrorOk')
       return new Promise((resolve, reject) => {
         Registration(payload.login, payload.password, payload.email)
         .then(function (response) {
@@ -38,7 +31,7 @@ export default {
       })
     },
     auth ({commit}, payload) {
-      commit('clearError')
+      commit('clearErrorOk')
       return new Promise((resolve, reject) => {
         Login(payload.login, payload.password)
         .then(function (response) {
@@ -56,14 +49,18 @@ export default {
           return reject(err)
         })
       })
+    },
+    checkToken ({commit}) {
+      GetCookie().then((r) => {
+        if (r.data.ok === 'true') {
+          commit('setToken', r.data.data)
+        }
+      }).catch(() => {})
     }
   },
   getters: {
     user (state) {
       return state.user
-    },
-    error (state) {
-      return state.userError
     }
   }
 }

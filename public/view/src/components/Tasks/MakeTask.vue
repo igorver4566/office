@@ -189,6 +189,14 @@
 </template>
 
 <script>
+  import tag from './tags.json'
+  function getIdFromArray (el) {
+    return (e) => {
+      if (e.name === el) {
+        return e.id
+      }
+    }
+  }
   export default {
     data () {
       return {
@@ -203,13 +211,52 @@
         price: '',
         tags: '',
         make_slack: false,
-        message: ''
+        message: '',
+        formFields: null
       }
     },
     methods: {
       onSubmit () {
-        console.log(this.name, this.make_slack, this.time_dev)
+        const task = {
+          id: null,
+          name: this.name,
+          access: this.access,
+          manager_id: parseInt(this.formFields.manager.map(getIdFromArray(this.manager)).toString()),
+          time_dev: parseInt(this.time_dev),
+          time_manage: parseInt(this.time_manage),
+          owner_id: parseInt(this.formFields.owner.map(getIdFromArray(this.owner)).toString()),
+          developer_id: parseInt(this.formFields.developer.map(getIdFromArray(this.developer)).toString()),
+          price: parseInt(this.price),
+          tags: this.tags.join(','),
+          make_slack: this.make_slack ? 1 : 0,
+          message: this.message
+        }
+        this.$store.dispatch('makeTask', task)
+            .then(() => {})
+            .catch(() => {})
       }
+    },
+    computed: {
+      tags_items () {
+        return tag.tags
+      },
+      managers () {
+        return this.formFields ? this.formFields.manager.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
+      },
+      owners () {
+        return this.formFields ? this.formFields.owner.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
+      },
+      developers () {
+        return this.formFields ? this.formFields.developer.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
+      }
+    },
+    created () {
+      this.$store.dispatch('getFormFields')
+      .then((r) => {
+        this.formFields = this.$store.getters.form
+        console.log()
+      })
+      .catch(() => {})
     }
   }
 </script>

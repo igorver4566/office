@@ -49,6 +49,21 @@
   <v-content>
       <router-view></router-view>
   </v-content>
+  <v-snackbar
+      v-model="snackbar"
+      :color="color"
+      top
+    >
+      {{ error }}
+      {{ ok }}
+      <v-btn
+        dark
+        flat
+        @click="snackbar = false"
+      >
+        Закрыть
+      </v-btn>
+    </v-snackbar>
 </v-app>
 </template>
 
@@ -56,7 +71,9 @@
 export default {
   data () {
     return {
+      snackbar: false,
       drawer: false,
+      color: 'error',
       links: [
         {title: 'exit_to_app', url: '/login'},
         {title: 'face', url: '/register'}
@@ -64,6 +81,24 @@ export default {
       items: [
         {title: 'Создать задачу', url: '/make_task'}
       ]
+    }
+  },
+  computed: {
+    error () {
+      if (this.$store.getters.error != null) {
+        this.color = 'error'
+        this.snackbar = false
+        this.snackbar = true
+        return this.$store.getters.error
+      }
+    },
+    ok () {
+      if (this.$store.getters.ok != null) {
+        this.color = 'success'
+        this.snackbar = false
+        this.snackbar = true
+        return this.$store.getters.ok
+      }
     }
   }
 }
