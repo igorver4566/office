@@ -103,10 +103,10 @@ func JsonResponse(response interface{}) []byte {
 	return json
 }
 
-func JsonResponseByVar(ok string, data string) []byte {
+func JsonResponseByVar(ok string, data interface{}) []byte {
 	var res struct {
-		Ok   string `json:"ok"`
-		Data string `json:"data"`
+		Ok   string      `json:"ok"`
+		Data interface{} `json:"data"`
 	}
 	res.Ok = ok
 	res.Data = data

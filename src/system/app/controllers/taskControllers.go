@@ -27,3 +27,13 @@ func GetTaskForm(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(auth.JsonResponse(res))
 }
+
+func GetTasks(w http.ResponseWriter, r *http.Request) {
+	res, err := db.GetAllTasks()
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	if err != nil {
+		w.Write(auth.JsonResponseByVar("false", err.Error()))
+	}
+	w.Write(auth.JsonResponseByVar("true", res))
+}

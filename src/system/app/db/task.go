@@ -34,7 +34,7 @@ func (task *Task) NewTask() []byte {
 		panic(err.Error())
 	}
 	defer insert.Close()
-	lastid, err := insert.Exec(task.Name,
+	lastId, err := insert.Exec(task.Name,
 		task.Access,
 		task.ManagerID,
 		task.TimeDev,
@@ -47,11 +47,34 @@ func (task *Task) NewTask() []byte {
 		task.Message,
 		task.NameSlack)
 	if err != nil {
-		str = auth.JsonResponseByVar("false", "Ошибка при создании задачи")
-		panic(err.Error())
+		str = auth.JsonResponseByVar("false", "Ошибка при создании задачи"+err.Error())
 	} else {
-		id, _ := lastid.LastInsertId()
+		id, _ := lastId.LastInsertId()
 		str = auth.JsonResponseByVar("true", "Задача успешно создана под номером "+strconv.FormatInt(id, 10))
 	}
 	return str
+}
+
+func GetAllTasks() ([]Task, error) {
+	var tasksArr []Task
+	var task Task
+	d := Init()
+	defer d.Close()
+	rows, err := d.Query("SELECT * FROM task ORDER BY id")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&task.ID, &task.Name, &task.Access, &task.ManagerID, &task.TimeDev, &task.TimeManage, &task.OwnerID, &task.DeveloperID, &task.Price, &task.Tags, &task.MakeSlack, &task.Message, &task.NameSlack, &task.StatusID)
+		if err != nil {
+			return nil, err
+		}
+		tasksArr = append(tasksArr, task)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return tasksArr, nil
 }
