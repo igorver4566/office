@@ -1,7 +1,7 @@
 <template>
     <v-container fluid fill-height>
         <v-layout align-center justify-center>
-        <v-flex xs8>
+        <v-flex xs12 sm8>
             <v-stepper v-model="e1">
                 <v-stepper-header>
                 <v-stepper-step editable :complete="e1 > 1" step="1">Общее</v-stepper-step>
@@ -254,7 +254,6 @@
       this.$store.dispatch('getFormFields')
       .then((r) => {
         this.formFields = this.$store.getters.form
-        console.log()
       })
       .catch(() => {})
     }

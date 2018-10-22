@@ -108,3 +108,24 @@ func (user *UserCredentials) CheckUser() []byte {
 	}
 	return strerr
 }
+
+func GetUserById(id int64, token string) (interface{}, error) {
+	var user struct {
+		Login string `json:"login"`
+		Name  string `json:"name"`
+		Token string `json:"token"`
+	}
+	user.Token = token
+	d := Init()
+	defer d.Close()
+	exists, err := d.Prepare("SELECT login, name FROM users WHERE (id = ?)")
+	if err != nil {
+		return nil, err
+	}
+	defer exists.Close()
+	err = exists.QueryRow(id).Scan(&user.Login, &user.Name)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}

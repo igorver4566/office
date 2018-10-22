@@ -43,12 +43,17 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 func CheckToken(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	token := vars["token"]
-	_, err := auth.IsTokenValid(token)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	id, err := auth.IsTokenValid(token)
+	if err != nil || id == 0 {
+		w.Write(auth.JsonResponseByVar("false", err.Error()))
+		return
+	}
+	res, err := db.GetUserById(id, token)
 	if err != nil {
 		w.Write(auth.JsonResponseByVar("false", err.Error()))
 		return
 	}
-	w.Write(auth.JsonResponseByVar("true", token))
+	w.Write(auth.JsonResponseByVar("true", res))
 }

@@ -1,12 +1,25 @@
 import {Registration, Login, SetCookie, GetCookie} from '@/api/hostsetting.js'
+import {WeatherLocation} from '@/api/weather.js'
 
 export default {
   state: {
-    user: null
+    user: null,
+    userLogin: null,
+    userName: null,
+    location: 'St. Petersburg',
+    weather: 0
   },
   mutations: {
     setToken (state, token) {
       state.user = token
+    },
+    setLocation (state, data) {
+      state.location = data.location.city
+      state.weather = data.item.condition.temp
+    },
+    setUserFields (state, data) {
+      state.userLogin = data.login
+      state.userName = data.name
     }
   },
   actions: {
@@ -51,16 +64,40 @@ export default {
       })
     },
     checkToken ({commit}) {
+      commit('clearErrorOk')
       GetCookie().then((r) => {
         if (r.data.ok === 'true') {
-          commit('setToken', r.data.data)
+          commit('setToken', r.data.data.token)
+          commit('setUserFields', r.data.data)
         }
-      }).catch(() => {})
+      }).catch(err => {
+        commit('setError', err)
+      })
+    },
+    userLocation ({commit}) {
+      commit('clearErrorOk')
+      WeatherLocation().then((r) => {
+        commit('setLocation', r)
+      }).catch(err => {
+        commit('setError', err)
+      })
     }
   },
   getters: {
     user (state) {
       return state.user
+    },
+    userName (state) {
+      return state.userName
+    },
+    userLogin (state) {
+      return state.userLogin
+    },
+    location (state) {
+      return state.location
+    },
+    weather (state) {
+      return state.weather
     }
   }
 }

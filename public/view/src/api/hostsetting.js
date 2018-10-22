@@ -34,5 +34,9 @@ export function SetCookie (token) {
 }
 
 export function GetCookie () {
-  return axios.get(Settings.host + 'api/check-token/' + Cookies.get('Authorization'))
+  if (Cookies.get('Authorization')) {
+    return axios.get(Settings.host + 'api/check-token/' + Cookies.get('Authorization'))
+  } else {
+    throw new Error('Ошибка проверки токена')
+  }
 }
