@@ -20,5 +20,7 @@ func NewRouter() (r Router) {
 	r.Router.HandleFunc("/api/tasks/make", controller.MakeTask).Methods("POST")
 	r.Router.HandleFunc("/api/tasks/make", controller.GetTaskForm).Methods("GET")
 	r.Router.HandleFunc("/api/tasks", controller.GetTasks).Methods("GET")
+	r.Router.HandleFunc("/api/subtasks/make", controller.MakeSubTask).Methods("POST")
+	r.Router.HandleFunc("/api/subtasks", controller.GetSubTasks).Methods("GET")
 	return
 }
