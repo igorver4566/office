@@ -25,8 +25,15 @@ export function GetFormTask () {
 }
 
 export function MakeNewTask (obj) {
-  console.log(obj)
   return axios.post(Settings.host + 'api/tasks/make', obj)
+}
+
+export function GetTasks () {
+  return axios.get(Settings.host + 'api/tasks')
+}
+
+export function GetSubTasks () {
+  return axios.get(Settings.host + 'api/subtasks')
 }
 
 export function SetCookie (token) {

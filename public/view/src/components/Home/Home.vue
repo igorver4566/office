@@ -11,11 +11,11 @@
       <v-flex xs12 sm6>
         <Notify></Notify>
       </v-flex>
-      <v-flex xs12 sm6>
+      <v-flex xs12 sm7>
         <task-grid></task-grid>
       </v-flex>
-      <v-flex xs12 sm6>
-        
+      <v-flex xs12 sm5>
+        <SubTaskGrid />
       </v-flex>
     </v-layout>
   </v-container>
@@ -24,11 +24,13 @@
 <script>
 import Notify from './Notify'
 import TaskGrid from './TaskGrid'
+import SubTaskGrid from './SubTaskGrid'
 
 export default {
   components: {
     Notify,
-    TaskGrid
+    TaskGrid,
+    SubTaskGrid
   },
   data () {
     return {}

@@ -6,7 +6,7 @@
                 <v-stepper-header>
                 <v-stepper-step editable :complete="e1 > 1" step="1">Общее</v-stepper-step>
                 <v-divider></v-divider>
-                <v-stepper-step editable :complete="e1 > 2" step="2">Заказчик</v-stepper-step>
+                <v-stepper-step editable :complete="e1 > 2" step="2">Заказчик / Исполнитель</v-stepper-step>
                 <v-divider></v-divider>
                 <v-stepper-step editable :complete="e1 > 3" step="3">Дополнительно</v-stepper-step>
                 <v-divider></v-divider>
@@ -75,33 +75,6 @@
                                 label="Исполнитель"
                                 v-model="developer" 
                             ></v-select>
-
-                        </v-flex>
-                        <v-flex xs5 md3>
-                            <v-text-field 
-                                name="time_manage" 
-                                label="Время менеджера" 
-                                type="text" 
-                                v-model="time_manage"
-                            ></v-text-field>
-
-                        </v-flex>
-                        <v-flex xs5 md3>
-                            <v-text-field 
-                                name="time_dev" 
-                                label="Время Исполнителя" 
-                                type="text" 
-                                v-model="time_dev"
-                            ></v-text-field>
-
-                        </v-flex>
-                        <v-flex xs12 md5>
-                            <v-text-field 
-                                name="price" 
-                                label="Цена" 
-                                type="text" 
-                                v-model="price"
-                            ></v-text-field>
 
                         </v-flex>
                     </v-layout>
@@ -206,9 +179,6 @@
         access: '',
         owner: '',
         developer: '',
-        time_manage: '',
-        time_dev: '',
-        price: '',
         tags: '',
         make_slack: false,
         message: '',
@@ -222,11 +192,8 @@
           name: this.name,
           access: this.access,
           manager_id: parseInt(this.formFields.manager.map(getIdFromArray(this.manager)).toString()),
-          time_dev: parseInt(this.time_dev),
-          time_manage: parseInt(this.time_manage),
           owner_id: parseInt(this.formFields.owner.map(getIdFromArray(this.owner)).toString()),
           developer_id: parseInt(this.formFields.developer.map(getIdFromArray(this.developer)).toString()),
-          price: parseInt(this.price),
           tags: this.tags.join(','),
           make_slack: this.make_slack ? 1 : 0,
           message: this.message

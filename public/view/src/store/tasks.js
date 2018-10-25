@@ -1,4 +1,4 @@
-import {GetFormTask, MakeNewTask} from '@/api/hostsetting.js'
+import {GetFormTask, MakeNewTask, GetTasks} from '@/api/hostsetting.js'
 
 export default {
   state: {
@@ -8,6 +8,9 @@ export default {
   mutations: {
     setForm (state, fields) {
       state.form = fields
+    },
+    setTasks (state, tasks) {
+      state.tasks = tasks
     }
   },
   actions: {
@@ -28,7 +31,6 @@ export default {
     makeTask ({commit}, payload) {
       commit('clearErrorOk')
       return new Promise((resolve, reject) => {
-        console.log(payload)
         MakeNewTask(payload)
         .then((response) => {
           if (response.data.ok === 'true') {
@@ -43,11 +45,28 @@ export default {
           return reject(err)
         })
       })
+    },
+    getTasks ({commit}) {
+      commit('clearErrorOk')
+      GetTasks()
+      .then((response) => {
+        if (response.data.ok === 'true') {
+          commit('setTasks', response.data.data.slice(0, 10))
+        } else {
+          commit('setError', response.data.data)
+        }
+      })
+      .catch(err => {
+        commit('setError', err)
+      })
     }
   },
   getters: {
     form (state) {
       return state.form
+    },
+    tasks (state) {
+      return state.tasks
     }
   }
 }
