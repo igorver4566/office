@@ -88,9 +88,6 @@ export default {
         return val
       })
     }
-  },
-  created () {
-    this.$store.dispatch('getTasks')
   }
 }
 </script>

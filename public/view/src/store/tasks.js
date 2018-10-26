@@ -17,33 +17,25 @@ export default {
     getFormFields ({commit, state}) {
       commit('clearErrorOk')
       if (state.form === null) {
-        return new Promise((resolve, reject) => {
-          GetFormTask().then((r) => {
-            commit('setForm', r.data)
-            return resolve(r.data)
-          }).catch((err) => {
-            commit('setError', err)
-            return reject(err)
-          })
+        GetFormTask().then((r) => {
+          commit('setForm', r.data)
+        }).catch((err) => {
+          commit('setError', err)
         })
       }
     },
     makeTask ({commit}, payload) {
       commit('clearErrorOk')
-      return new Promise((resolve, reject) => {
-        MakeNewTask(payload)
-        .then((response) => {
-          if (response.data.ok === 'true') {
-            commit('setOk', response.data.data)
-          } else {
-            commit('setError', response.data.data)
-          }
-          return resolve()
-        })
-        .catch(err => {
-          commit('setError', err)
-          return reject(err)
-        })
+      MakeNewTask(payload)
+      .then((response) => {
+        if (response.data.ok === 'true') {
+          commit('setOk', response.data.data)
+        } else {
+          commit('setError', response.data.data)
+        }
+      })
+      .catch(err => {
+        commit('setError', err)
       })
     },
     getTasks ({commit}) {

@@ -12,32 +12,54 @@ import (
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	user := db.UserCredential()
-
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		fmt.Println("Error in request")
 		return
 	}
 
-	register := user.RegisterUser()
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(register)
+	token, id, err := user.RegisterUser()
+	if err != nil {
+		w.Write(auth.JsonResponseByVar("false", err.Error()))
+		return
+	}
+	res, err := db.GetUserById(int64(id), token)
+	if err != nil {
+		w.Write(auth.JsonResponseByVar("false", err.Error()))
+		return
+	}
+
+	w.Write(auth.JsonResponseByVar("true", res))
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var user db.UserCredentials
-
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		fmt.Println("Error in request")
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(auth.JsonResponseByVar("false", "Ошибка в запросе"))
 		return
 	}
-
-	login := user.CheckUser()
+	token, id, err := user.CheckUser()
+	if err != nil {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(auth.JsonResponseByVar("false", err.Error()))
+		return
+	}
+	res, err := db.GetUserById(int64(id), token)
+	if err != nil {
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(auth.JsonResponseByVar("false", err.Error()))
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(login)
+	w.Write(auth.JsonResponseByVar("true", res))
 }
 
 func CheckToken(w http.ResponseWriter, r *http.Request) {

@@ -25,42 +25,34 @@ export default {
   actions: {
     register ({commit}, payload) {
       commit('clearErrorOk')
-      return new Promise((resolve, reject) => {
-        Registration(payload.login, payload.password, payload.email)
-        .then(function (response) {
-          if (response.data.ok === 'true') {
-            commit('setToken', response.data.token)
-            SetCookie(response.data.token)
-          } else {
-            commit('setError', response.data.token)
-            return reject(response.data.token)
-          }
-          return resolve()
-        })
-        .catch(err => {
-          commit('setError', err)
-          return reject(err)
-        })
+      Registration(payload.login, payload.password, payload.email)
+      .then(function (r) {
+        if (r.data.ok === 'true') {
+          commit('setToken', r.data.data.token)
+          commit('setUserFields', r.data.data)
+          SetCookie(r.data.data.token)
+        } else {
+          commit('setError', r.data.data)
+        }
+      })
+      .catch(err => {
+        commit('setError', err)
       })
     },
     auth ({commit}, payload) {
       commit('clearErrorOk')
-      return new Promise((resolve, reject) => {
-        Login(payload.login, payload.password)
-        .then(function (response) {
-          if (response.data.ok === 'true') {
-            commit('setToken', response.data.token)
-            SetCookie(response.data.token)
-          } else {
-            commit('setError', response.data.token)
-            return reject(response.data.token)
-          }
-          return resolve()
-        })
-        .catch(err => {
-          commit('setError', err)
-          return reject(err)
-        })
+      Login(payload.login, payload.password)
+      .then(function (r) {
+        if (r.data.ok === 'true') {
+          commit('setToken', r.data.data.token)
+          commit('setUserFields', r.data.data)
+          SetCookie(r.data.data.token)
+        } else {
+          commit('setError', r.data.data)
+        }
+      })
+      .catch(err => {
+        commit('setError', err)
       })
     },
     checkToken ({commit}) {
@@ -69,6 +61,8 @@ export default {
         if (r.data.ok === 'true') {
           commit('setToken', r.data.data.token)
           commit('setUserFields', r.data.data)
+        } else {
+          commit('setError', r.data.data)
         }
       }).catch(err => {
         commit('setError', err)

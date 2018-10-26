@@ -61,9 +61,6 @@ export default {
         return val
       })
     }
-  },
-  created () {
-    this.$store.dispatch('getSubTasks')
   }
 }
 </script>

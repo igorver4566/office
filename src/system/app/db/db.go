@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 
 	"../auth"
 	_ "github.com/go-sql-driver/mysql"
@@ -39,28 +40,30 @@ func Init() *sql.DB {
 	return Db
 }
 
-func NewUser(login string, hash []byte, email string) []byte {
-	var id int
+func NewUser(login string, hash []byte, email string) (string, int, error) {
 	d := Init()
 	defer d.Close()
 	insert, err := d.Prepare("INSERT INTO users (login, password, email, role_id, block) VALUES (?, ?, ?, 1, 0)")
 	if err != nil {
-		panic(err.Error())
+		return "", 0, errors.New("Ошибка при регистрации, попробуйте ещё раз")
 	}
 	defer insert.Close()
-	_ = insert.QueryRow(login, hash, email).Scan(&id)
-
-	return auth.Auth(id)
+	lastId, err := insert.Exec(login, hash, email)
+	if err != nil {
+		return "", 0, errors.New("Ошибка при регистрации, попробуйте ещё раз")
+	} else {
+		id, _ := lastId.LastInsertId()
+		return auth.Auth(int(id))
+	}
 }
 
-func (user *UserCredentials) RegisterUser() []byte {
+func (user *UserCredentials) RegisterUser() (string, int, error) {
 	var id int
-	var strerr []byte
 	d := Init()
 	defer d.Close()
 	exists, err := d.Prepare("SELECT id FROM users WHERE (login = ? or email = ?)")
 	if err != nil {
-		panic(err.Error())
+		return "", 0, errors.New("Ошибка при регистрации, попробуйте ещё раз")
 	}
 	defer exists.Close()
 	_ = exists.QueryRow(user.Login, user.Email).Scan(&id)
@@ -68,17 +71,12 @@ func (user *UserCredentials) RegisterUser() []byte {
 		cost := bcrypt.DefaultCost
 		hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), cost)
 		if err != nil {
-			panic(err.Error())
+			return "", 0, errors.New("Ошибка шифрования пароля")
 		}
-		strerr = NewUser(user.Login, hash, user.Email)
+		return NewUser(user.Login, hash, user.Email)
 	} else {
-		var str auth.Token
-		str.Ok = "false"
-		str.Token = "Пользователь с такими данными уже зарегистрирован"
-		strerr = auth.JsonResponse(str)
+		return "", 0, errors.New("Пользователь с такими данными уже зарегистрирован")
 	}
-
-	return strerr
 }
 
 func CheckPasswordHash(password, hash string) bool {
@@ -86,27 +84,22 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func (user *UserCredentials) CheckUser() []byte {
+func (user *UserCredentials) CheckUser() (string, int, error) {
 	var id int
 	var pass string
-	var strerr []byte
 	d := Init()
 	defer d.Close()
 	exists, err := d.Prepare("SELECT id, password FROM users WHERE (login = ?)")
 	if err != nil {
-		panic(err.Error())
+		return "", 0, errors.New("Ошибка проверки логина и пароля")
 	}
 	defer exists.Close()
 	err = exists.QueryRow(user.Login).Scan(&id, &pass)
 	if err == nil && CheckPasswordHash(user.Password, pass) {
-		strerr = auth.Auth(id)
+		return auth.Auth(id)
 	} else {
-		var str auth.Token
-		str.Ok = "false"
-		str.Token = "Неправильный логин или пароль"
-		strerr = auth.JsonResponse(str)
+		return "", 0, errors.New("Ошибка проверки логина и пароля")
 	}
-	return strerr
 }
 
 func GetUserById(id int64, token string) (interface{}, error) {

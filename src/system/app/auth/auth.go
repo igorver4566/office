@@ -28,6 +28,10 @@ var (
 	VerifyKey *rsa.PublicKey
 )
 
+func init() {
+	initKeys()
+}
+
 func initKeys() {
 	var err error
 	SignKeyFile, err := ioutil.ReadFile(privKeyPath)
@@ -55,9 +59,7 @@ func initKeys() {
 	}
 }
 
-func Auth(id int) []byte {
-	var str Token
-	initKeys()
+func Auth(id int) (string, int, error) {
 	signer := jwt.NewWithClaims(jwt.GetSigningMethod("RS512"), jwt.MapClaims{
 		"id":   id,
 		"role": "admin",
@@ -65,14 +67,10 @@ func Auth(id int) []byte {
 	})
 	tokenString, err := signer.SignedString(SignKey)
 	if err != nil {
-		str.Ok = "false"
-		str.Token = "Ошибка получения ключа"
-		log.Printf("Error signing token: %v\n", err)
+		return "", 0, errors.New("Ошибка получения токена")
 	} else {
-		str.Ok = "true"
-		str.Token = tokenString
+		return tokenString, id, nil
 	}
-	return JsonResponse(str)
 }
 func ValidateTokenMiddleware(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
@@ -119,7 +117,6 @@ func JsonResponseByVar(ok string, data interface{}) []byte {
 }
 
 func IsTokenValid(val string) (int64, error) {
-	initKeys()
 	token, err := jwt.Parse(val, func(token *jwt.Token) (interface{}, error) {
 		return VerifyKey, nil
 	})
