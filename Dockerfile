@@ -1,6 +1,6 @@
 # этап сборки (build stage)
 FROM node:9.11.1-alpine as build-stage
-WORKDIR /public/view
+WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
