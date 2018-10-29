@@ -86,3 +86,19 @@ func GetAllTasks() ([]TaskReturn, error) {
 	}
 	return tasksArr, nil
 }
+
+func GetTaskById(id int64) (TaskReturn, error) {
+	var task TaskReturn
+	d := Init()
+	defer d.Close()
+	exists, err := d.Prepare("SELECT t.id, t.name, t.access, u.name, o.name, u2.name, t.tags, t.message, t.name_slack, s.name FROM task t INNER JOIN users u ON t.manager_id = u.id INNER JOIN owner o ON t.owner_id = o.id INNER JOIN users u2 ON t.developer_id = u2.id INNER JOIN status s ON t.status_id = s.id WHERE (t.id = ?)")
+	if err != nil {
+		return TaskReturn{}, err
+	}
+	defer exists.Close()
+	err = exists.QueryRow(id).Scan(&task.ID, &task.Name, &task.Access, &task.Manager, &task.Owner, &task.Developer, &task.Tags, &task.Message, &task.NameSlack, &task.Status)
+	if err != nil {
+		return TaskReturn{}, err
+	}
+	return task, nil
+}

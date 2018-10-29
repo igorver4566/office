@@ -194,7 +194,7 @@
           manager_id: parseInt(this.formFields.manager.map(getIdFromArray(this.manager)).toString()),
           owner_id: parseInt(this.formFields.owner.map(getIdFromArray(this.owner)).toString()),
           developer_id: parseInt(this.formFields.developer.map(getIdFromArray(this.developer)).toString()),
-          tags: this.tags.join(','),
+          tags: this.tags.join(', '),
           make_slack: this.make_slack ? 1 : 0,
           message: this.message
         }

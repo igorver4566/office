@@ -27,6 +27,7 @@ func GetSubTasks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		w.Write(auth.JsonResponseByVar("false", err.Error()))
+		return
 	}
 	w.Write(auth.JsonResponseByVar("true", res))
 }

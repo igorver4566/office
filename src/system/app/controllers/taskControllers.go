@@ -3,9 +3,11 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"../auth"
 	"../db"
+	"github.com/gorilla/mux"
 )
 
 func MakeTask(w http.ResponseWriter, r *http.Request) {
@@ -34,6 +36,33 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		w.Write(auth.JsonResponseByVar("false", err.Error()))
+		return
 	}
+	w.Write(auth.JsonResponseByVar("true", res))
+}
+
+func GetOneTask(w http.ResponseWriter, r *http.Request) {
+	var res struct {
+		Task db.TaskReturn      `json:"task"`
+		Sub  []db.SubTaskReturn `json:"items"`
+	}
+
+	vars := mux.Vars(r)
+	id := vars["id"]
+	idInt, _ := strconv.ParseInt(id, 10, 64)
+	task, err := db.GetTaskById(idInt)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	if err != nil {
+		w.Write(auth.JsonResponseByVar("false", err.Error()))
+		return
+	}
+	subs, err := db.GetSubTasksByTask(strconv.FormatInt(int64(task.ID), 10))
+	if err != nil {
+		w.Write(auth.JsonResponseByVar("false", err.Error()))
+		return
+	}
+	res.Task = task
+	res.Sub = subs
 	w.Write(auth.JsonResponseByVar("true", res))
 }

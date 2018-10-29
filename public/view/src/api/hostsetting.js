@@ -32,6 +32,10 @@ export function GetTasks () {
   return axios.get(Settings.host + 'api/tasks')
 }
 
+export function GetTaskById (id) {
+  return axios.get(Settings.host + 'api/task/' + id)
+}
+
 export function GetSubTasks () {
   return axios.get(Settings.host + 'api/subtasks')
 }

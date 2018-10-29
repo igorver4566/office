@@ -1,17 +1,17 @@
 <template>
   <v-card>
-    <v-card-title primary-title><h3>Проекты</h3></v-card-title>
+    <v-card-title primary-title><h3>Задачи</h3></v-card-title>
     <v-data-table
       :headers="headers"
       :items="tasks"
       hide-actions
     >
       <template slot="items" slot-scope="props">
-        <tr class="tasks_go" @click="toTask(props.item.id)">
+        <tr @click="props.expanded = !props.expanded">
           <td>{{ props.item.id }}</td>
           <td class="text-xs-left">{{ props.item.name }}</td>
-          <td class="text-xs-center">{{ props.item.manager }}</td>
-          <td class="text-xs-center">{{ props.item.time}} мин.</td>
+          <td class="text-xs-center">{{ props.item.user }}</td>
+          <td class="text-xs-center">{{ props.item.time_dev + props.item.time_manage }} мин.</td>
           <td class="text-xs-center">{{ props.item.price }} руб.</td>
           <td class="text-xs-center">
             <v-chip
@@ -24,6 +24,11 @@
               </v-chip>
           </td>
         </tr>
+      </template>
+      <template slot="expand" slot-scope="props">
+        <v-card flat>
+          <v-card-text><span class="font-weight-bold">Тех. задание</span><br>{{ props.item.message }}</v-card-text>
+        </v-card>
       </template>
     </v-data-table>
   </v-card>
@@ -47,16 +52,16 @@ export default {
           value: 'name'
         },
         {
-          text: 'Менеджер',
+          text: 'Исполнитель',
           align: 'center',
           sortable: false,
-          value: 'manager'
+          value: 'user'
         },
         {
           text: 'Время',
           align: 'center',
           sortable: true,
-          value: 'time'
+          value: 'time_dev'
         },
         {
           text: 'Стоимость',
@@ -73,35 +78,11 @@ export default {
       ]
     }
   },
-  methods: {
-    toTask (id) {
-      this.$router.push('/task/' + id)
-    }
-  },
   computed: {
     tasks () {
-      var tasks = this.$store.getters.tasks
-      var subs = this.$store.getters.subTasks
-      return tasks.map((val) => {
-        var id = val.id
-        val.time = 0
-        val.price = 0
-        subs.forEach(element => {
-          if (element.task_id === id) {
-            val.time = val.time + element.time_dev + element.time_manage
-            val.price = val.price + element.price
-          }
-        })
-        return val
-      })
+      var task = this.$store.getters.task
+      return task.items
     }
   }
 }
 </script>
-
-<style>
-  .tasks_go {
-    cursor: pointer;
-  }
-</style>
-

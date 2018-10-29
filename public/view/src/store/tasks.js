@@ -1,7 +1,11 @@
-import {GetFormTask, MakeNewTask, GetTasks} from '@/api/hostsetting.js'
+import {GetFormTask, MakeNewTask, GetTasks, GetTaskById} from '@/api/hostsetting.js'
 
 export default {
   state: {
+    task: {
+      task: {},
+      items: []
+    },
     tasks: [],
     form: null
   },
@@ -11,6 +15,9 @@ export default {
     },
     setTasks (state, tasks) {
       state.tasks = tasks
+    },
+    setTask (state, task) {
+      state.task = task
     }
   },
   actions: {
@@ -51,6 +58,20 @@ export default {
       .catch(err => {
         commit('setError', err)
       })
+    },
+    getTaskById ({commit}, id) {
+      commit('clearErrorOk')
+      GetTaskById(id)
+      .then((response) => {
+        if (response.data.ok === 'true') {
+          commit('setTask', response.data.data)
+        } else {
+          commit('setError', response.data.data)
+        }
+      })
+      .catch(err => {
+        commit('setError', err)
+      })
     }
   },
   getters: {
@@ -59,6 +80,9 @@ export default {
     },
     tasks (state) {
       return state.tasks
+    },
+    task (state) {
+      return state.task
     }
   }
 }

@@ -81,3 +81,27 @@ func GetAllSubTasks() ([]SubTaskReturn, error) {
 	}
 	return subTaskArr, nil
 }
+
+func GetSubTasksByTask(id string) ([]SubTaskReturn, error) {
+	var subTaskArr []SubTaskReturn
+	var subTask SubTaskReturn
+	d := Init()
+	defer d.Close()
+	rows, err := d.Query("SELECT s.id, s.name, s.price, s.time_dev, s.time_manage, s.message, s.task_id, st.name, u.name FROM sub_task s INNER JOIN status st ON s.status_id = st.id INNER JOIN users u ON s.user_id = u.id WHERE (s.task_id = " + id + ") ORDER BY s.id")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&subTask.ID, &subTask.Name, &subTask.Price, &subTask.TimeDev, &subTask.TimeManage, &subTask.Message, &subTask.TaskID, &subTask.Status, &subTask.User)
+		if err != nil {
+			return nil, err
+		}
+		subTaskArr = append(subTaskArr, subTask)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return subTaskArr, nil
+}
