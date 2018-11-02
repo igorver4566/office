@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"../auth"
+	"../slack"
 )
 
 //Task model
@@ -38,6 +39,16 @@ type TaskReturn struct {
 //NewTask - make new task. Return json {ok: var1, data: var2}
 func (task *Task) NewTask() []byte {
 	var str []byte
+	if task.MakeSlack != 0 {
+		var purpose = "Название: " + task.Name + " Доступы: " + task.Access + " Ссылка: http://localhost:8081/task/" + string(task.ID)
+		group, err := slack.NewGroup("fromnewoffice", purpose)
+		if err != nil {
+			str = auth.JsonResponseByVar("false", "Ошибка при создании задачи"+err.Error())
+			return str
+		}
+		task.NameSlack = group
+	}
+
 	d := Init()
 	defer d.Close()
 	insert, err := d.Prepare("INSERT INTO task VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)")

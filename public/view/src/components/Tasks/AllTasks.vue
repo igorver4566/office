@@ -13,6 +13,7 @@
               <td class="text-xs-left">{{ props.item.name }}</td>
               <td class="text-xs-center">{{ props.item.owner }}</td>
               <td class="text-xs-center">{{ props.item.manager }}</td>
+              <td class="text-xs-center">{{ props.item.developer }}</td>
               <td class="text-xs-center">{{ props.item.time}} мин.</td>
               <td class="text-xs-center">{{ props.item.price }} руб.</td>
               <td class="text-xs-center">{{ props.item.subs }}</td>
@@ -64,6 +65,12 @@ export default {
           value: 'manager'
         },
         {
+          text: 'Разработчик',
+          align: 'center',
+          sortable: false,
+          value: 'developer'
+        },
+        {
           text: 'Время',
           align: 'center',
           sortable: true,
@@ -99,7 +106,6 @@ export default {
     tasks () {
       var tasks = this.$store.getters.tasks
       var subs = this.$store.getters.subTasks
-      console.log(tasks, subs)
       return tasks.map((val) => {
         var id = val.id
         val.time = 0
@@ -122,3 +128,9 @@ export default {
   }
 }
 </script>
+
+<style>
+  .tasks_go {
+    cursor: pointer;
+  }
+</style>
