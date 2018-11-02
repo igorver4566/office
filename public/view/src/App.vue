@@ -79,7 +79,8 @@ export default {
         {title: 'face', url: '/register'}
       ],
       items: [
-        {title: 'Создать задачу', url: '/make_task'}
+        {title: 'Создать задачу', url: '/make_task'},
+        {title: 'Все задачи', url: '/tasks'}
       ]
     }
   },

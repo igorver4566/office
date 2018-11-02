@@ -59,6 +59,20 @@ export default {
         commit('setError', err)
       })
     },
+    getAllTasks ({commit}) {
+      commit('clearErrorOk')
+      GetTasks()
+      .then((response) => {
+        if (response.data.ok === 'true') {
+          commit('setTasks', response.data.data)
+        } else {
+          commit('setError', response.data.data)
+        }
+      })
+      .catch(err => {
+        commit('setError', err)
+      })
+    },
     getTaskById ({commit}, id) {
       commit('clearErrorOk')
       GetTaskById(id)

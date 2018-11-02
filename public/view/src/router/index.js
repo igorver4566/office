@@ -5,6 +5,7 @@ import Login from '@/components/Auth/Login'
 import Register from '@/components/Auth/Register'
 import MakeTask from '@/components/Tasks/MakeTask'
 import Task from '@/components/Tasks/Task'
+import AllTasks from '@/components/Tasks/AllTasks'
 
 Vue.use(Router)
 
@@ -30,6 +31,11 @@ export default new Router({
       path: '/make_task',
       name: 'make_task',
       component: MakeTask
+    },
+    {
+      path: '/tasks',
+      name: 'tasks',
+      component: AllTasks
     },
     {
       path: '/task/:id',

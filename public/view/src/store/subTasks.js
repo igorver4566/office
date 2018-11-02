@@ -23,6 +23,20 @@ export default {
       .catch(err => {
         commit('setError', err)
       })
+    },
+    getAllSubTasks ({commit}) {
+      commit('clearErrorOk')
+      GetSubTasks()
+      .then((response) => {
+        if (response.data.ok === 'true') {
+          commit('setSubTasks', response.data.data)
+        } else {
+          commit('setError', response.data.data)
+        }
+      })
+      .catch(err => {
+        commit('setError', err)
+      })
     }
   },
   getters: {
