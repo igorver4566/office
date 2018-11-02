@@ -10,7 +10,7 @@ var Slack struct {
 	API *slack.Client
 }
 
-var key = "xoxp-433530174866-432806158864-469802776608-a85d9fc0cbbedfc34eb66e82b412732b"
+var key = "xoxp-433530174866-432806158864-471942644726-69ce2ede6303e6cb860405f390adc978"
 
 func init() {
 	Slack.API = slack.New(key)
