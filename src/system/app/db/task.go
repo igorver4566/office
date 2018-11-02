@@ -41,7 +41,7 @@ func (task *Task) NewTask() []byte {
 	var str []byte
 	if task.MakeSlack != 0 {
 		var purpose = "Название: " + task.Name + " Доступы: " + task.Access + " Ссылка: http://localhost:8081/task/" + string(task.ID)
-		group, err := slack.NewGroup("fromnewoffice", purpose)
+		group, err := slack.NewGroup("task"+string(task.ID), purpose)
 		if err != nil {
 			str = auth.JsonResponseByVar("false", "Ошибка при создании задачи"+err.Error())
 			return str

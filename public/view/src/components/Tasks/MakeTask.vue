@@ -181,8 +181,7 @@
         developer: '',
         tags: '',
         make_slack: false,
-        message: '',
-        formFields: null
+        message: ''
       }
     },
     methods: {
@@ -208,20 +207,21 @@
         return tag.tags
       },
       managers () {
-        return this.formFields ? this.formFields.manager.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
+        var arr = this.$store.getters.form
+        return arr ? arr.manager.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
       },
       owners () {
-        return this.formFields ? this.formFields.owner.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
+        var arr = this.$store.getters.form
+        return arr ? arr.owner.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
       },
       developers () {
-        return this.formFields ? this.formFields.developer.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
+        var arr = this.$store.getters.form
+        return arr ? arr.developer.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
       }
     },
     created () {
       this.$store.dispatch('getFormFields')
-      .then((r) => {
-        this.formFields = this.$store.getters.form
-      })
+      .then((r) => {})
       .catch(() => {})
     }
   }

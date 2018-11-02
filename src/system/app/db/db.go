@@ -43,7 +43,7 @@ func Init() *sql.DB {
 func NewUser(login string, hash []byte, email string) (string, int, error) {
 	d := Init()
 	defer d.Close()
-	insert, err := d.Prepare("INSERT INTO users (login, password, email, role_id, block) VALUES (?, ?, ?, 1, 0)")
+	insert, err := d.Prepare("INSERT INTO users (login, password, email, role_id, block) VALUES (?, ?, ?, 3, 0)")
 	if err != nil {
 		return "", 0, errors.New("Ошибка при регистрации, попробуйте ещё раз")
 	}
