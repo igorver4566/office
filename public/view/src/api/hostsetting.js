@@ -2,7 +2,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 
 export const Settings = {
-  host: 'https://localhost:8080/'
+  host: 'https://127.0.0.1:8080/'
 }
 
 export function Registration (name, pass, mail) {
