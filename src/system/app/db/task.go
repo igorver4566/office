@@ -39,16 +39,6 @@ type TaskReturn struct {
 //NewTask - make new task. Return json {ok: var1, data: var2}
 func (task *Task) NewTask() []byte {
 	var str []byte
-	if task.MakeSlack != 0 {
-		var purpose = "Название: " + task.Name + " Доступы: " + task.Access + " Ссылка: http://localhost:8081/task/" + string(task.ID)
-		group, err := slack.NewGroup("task"+string(task.ID), purpose)
-		if err != nil {
-			str = auth.JsonResponseByVar("false", "Ошибка при создании задачи"+err.Error())
-			return str
-		}
-		task.NameSlack = group
-	}
-
 	d := Init()
 	defer d.Close()
 	insert, err := d.Prepare("INSERT INTO task VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)")
@@ -69,6 +59,14 @@ func (task *Task) NewTask() []byte {
 		str = auth.JsonResponseByVar("false", "Ошибка при создании задачи"+err.Error())
 	} else {
 		id, _ := lastId.LastInsertId()
+		if task.MakeSlack != 0 {
+			var purpose = "Название: " + task.Name + " Доступы: " + task.Access
+			_, err := slack.NewGroup("task"+string(id), purpose)
+			if err != nil {
+				str = auth.JsonResponseByVar("false", "Ошибка при создании задачи"+err.Error())
+				return str
+			}
+		}
 		str = auth.JsonResponseByVar("true", "Задача успешно создана под номером "+strconv.FormatInt(id, 10))
 	}
 	return str
