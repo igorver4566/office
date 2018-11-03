@@ -20,7 +20,7 @@ func NewServer() Server {
 
 func (s *Server) Init() {
 	log.Println("Init server...")
-	s.port = ":8080"
+	s.port = ":443"
 }
 
 func (s *Server) Start() {
