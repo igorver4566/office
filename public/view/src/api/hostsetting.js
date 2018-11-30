@@ -2,7 +2,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 
 export const Settings = {
-  host: 'http://localhost:8086/'
+  host: 'http://softsetters-office.ru:8086/'
 }
 
 export function Registration (name, pass, mail) {
