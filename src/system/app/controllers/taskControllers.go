@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -13,13 +12,12 @@ import (
 
 func MakeTask(w http.ResponseWriter, r *http.Request) {
 	var task db.Task
-	fmt.Println(r.Body)
 	err := json.NewDecoder(r.Body).Decode(&task)
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		w.Write(auth.JsonResponseByVar("false", err.Error()))
-		fmt.Println(err)
+		return
 	}
 	res := task.NewTask()
 	w.Write(res)

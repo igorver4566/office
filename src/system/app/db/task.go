@@ -43,7 +43,8 @@ func (task *Task) NewTask() []byte {
 	defer d.Close()
 	insert, err := d.Prepare("INSERT INTO task VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)")
 	if err != nil {
-		panic(err.Error())
+		str = auth.JsonResponseByVar("false", "Ошибка при подключении к базе "+err.Error())
+		return str
 	}
 	defer insert.Close()
 	lastId, err := insert.Exec(task.Name,
@@ -61,9 +62,9 @@ func (task *Task) NewTask() []byte {
 		id, _ := lastId.LastInsertId()
 		if task.MakeSlack != 0 {
 			var purpose = "Название: " + task.Name + " Доступы: " + task.Access
-			_, err := slack.NewGroup("task"+string(id), purpose)
+			_, err := slack.NewGroup("task"+strconv.FormatInt(id, 10), purpose)
 			if err != nil {
-				str = auth.JsonResponseByVar("false", "Ошибка при создании задачи"+err.Error())
+				str = auth.JsonResponseByVar("false", "Ошибка при создании задачи "+err.Error())
 				return str
 			}
 		}

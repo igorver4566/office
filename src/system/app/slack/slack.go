@@ -10,7 +10,7 @@ var Slack struct {
 	API *slack.Client
 }
 
-var key = "xoxp-433530174866-432806158864-434197968530-9eb0a6a9e5a5d53b1ea1138e991e550f"
+var key = ""
 
 func init() {
 	Slack.API = slack.New(key)
@@ -40,4 +40,25 @@ func NewGroup(name, purpose string) (string, error) {
 	}
 
 	return group.ID, nil
+}
+
+func PostMessage(channel, message, username string) (string, error) {
+	channelID, _, err := Slack.API.PostMessage(channel, slack.MsgOptionText(message, false), slack.MsgOptionUserName(username))
+	if err != nil {
+		return "", errors.New("Ошибка при отправке сообщения")
+	}
+	return channelID, nil
+}
+
+func ChatHistory(name string) ([]slack.Message, error) {
+
+	details := slack.HistoryParameters{
+		Count:     1000,
+		Inclusive: true}
+	history, err := Slack.API.GetGroupHistory(name, details)
+	msg := history.Messages
+	if err != nil {
+		return nil, errors.New("Ошибка при получении сообщений")
+	}
+	return msg, nil
 }

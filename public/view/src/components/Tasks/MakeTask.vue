@@ -186,16 +186,19 @@
     },
     methods: {
       onSubmit () {
+        var arr = this.$store.getters.form
         const task = {
           id: null,
           name: this.name,
           access: this.access,
-          manager_id: parseInt(this.formFields.manager.map(getIdFromArray(this.manager)).toString()),
-          owner_id: parseInt(this.formFields.owner.map(getIdFromArray(this.owner)).toString()),
-          developer_id: parseInt(this.formFields.developer.map(getIdFromArray(this.developer)).toString()),
+          manager_id: parseInt(arr.manager.map(getIdFromArray(this.manager)).toString()),
+          owner_id: parseInt(arr.owner.map(getIdFromArray(this.owner)).toString()),
+          developer_id: parseInt(arr.developer.map(getIdFromArray(this.developer)).toString()),
           tags: this.tags.join(', '),
           make_slack: this.make_slack ? 1 : 0,
-          message: this.message
+          message: this.message,
+          name_slack: '',
+          status_id: 0
         }
         this.$store.dispatch('makeTask', task)
             .then(() => {})
