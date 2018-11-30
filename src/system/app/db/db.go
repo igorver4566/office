@@ -32,7 +32,7 @@ func UserCredential() UserCredentials {
 }
 
 func Init() *sql.DB {
-	Db, err := sql.Open("mysql", "u839560_office:Zxczxc888@tcp(185.185.69.91)/u839560_office")
+	Db, err := sql.Open("mysql", "u839560_office:Zxczxc888@tcp(172.19.0.4)/u839560_office")
 
 	if err != nil {
 		panic(err.Error())
