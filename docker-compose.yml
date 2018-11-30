@@ -28,5 +28,3 @@ services:
     build: ./public/view
     ports:
       - 80:80
-    depends_on:
-      - mariadb
