@@ -10,6 +10,8 @@ services:
       - ./mariadb:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: Zxczxc888
+      MYSQL_USER: u839560_office
+      MYSQL_PASSWORD: Zxczxc888
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
