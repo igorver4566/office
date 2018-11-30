@@ -1,7 +1,30 @@
 version: '3'
 
 services:
+  mariadb:
+    image: mariadb:10.3
+    restart: always
+    ports:
+      - "3306:3307"
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Zxczxc888
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links: 
+      - mariadb:db
+    ports:
+      - 8765:80
+    environment:
+      MYSQL_ROOT_PASSWORD: Zxczxc888
+    depends_on:
+      - mariadb
+
   vue-build:
     build: ./public/view
     ports:
       - 80:80
+    depends_on:
+      - phpmyadmin
