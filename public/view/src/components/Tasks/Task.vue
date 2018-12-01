@@ -51,7 +51,7 @@
         </v-card>
       </v-flex>
       <v-flex xs12>
-        <SubTasks />
+        <SubTasks :id="this.id" />
       </v-flex>
       <v-flex xs12>
         <Chat />

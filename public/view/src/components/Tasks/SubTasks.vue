@@ -1,6 +1,14 @@
 <template>
   <v-card>
-    <v-card-title primary-title><h3>Задачи</h3></v-card-title>
+    <v-card-title primary-title>
+      <h3>Задачи</h3>
+      <v-spacer></v-spacer>
+      <v-btn 
+          flat
+          @click="dialog = true"
+        >
+        <v-icon>add</v-icon></v-btn>
+    </v-card-title>
     <v-data-table
       :headers="headers"
       :items="tasks"
@@ -31,13 +39,84 @@
         </v-card>
       </template>
     </v-data-table>
+    <v-dialog v-model="dialog" persistent max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Создать задачу</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-flex xs12>
+                <v-text-field name="name" v-model="name" label="Название задачи" required></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm12 md4>
+                <v-text-field name="price" v-model="price" label="Цена" required></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm6 md4>
+                <v-text-field
+                  name="time_dev"
+                  v-model="time_dev"
+                  label="Время разработчика"
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm6 md4>
+                <v-text-field
+                  name="time_manage"
+                  v-model="time_manage"
+                  label="Время менеджера"
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-textarea 
+                  box
+                  background-color="#fafafa"
+                  name="message" 
+                  label="Тех. задание" 
+                  auto-grow
+                  v-model="message" 
+                  rows="4"
+              ></v-textarea>
+              </v-flex>
+              <v-flex xs12>
+                <v-select
+                  :items="developers"
+                  label="Исполнитель"
+                  v-model="developer" 
+                ></v-select>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click="dialog = false">Close</v-btn>
+          <v-btn color="blue darken-1" flat @click="onSubmit()">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
+function getIdFromArray (el) {
+  return (e) => {
+    if (e.name === el) {
+      return e.id
+    }
+  }
+}
 export default {
+  props: ['id'],
   data () {
     return {
+      dialog: false,
+      name: '',
+      price: '',
+      time_dev: '',
+      time_manage: '',
+      developer: '',
+      message: '',
       headers: [
         {
           text: 'ID',
@@ -78,10 +157,44 @@ export default {
       ]
     }
   },
+  methods: {
+    onSubmit () {
+      var arr = this.$store.getters.form
+      const task = {
+        name: this.name,
+        price: parseInt(this.price),
+        time_dev: parseInt(this.time_dev),
+        time_manage: parseInt(this.time_manage),
+        message: this.message,
+        task_id: parseInt(this.id),
+        user_id: parseInt(arr.developer.map(getIdFromArray(this.developer)).toString())
+      }
+      this.$store.dispatch('makeSubTask', task)
+          .then(() => {
+            this.dialog = false
+            const id = this.id
+            this.$store.dispatch('getTaskById', id)
+          })
+          .catch(() => {})
+    }
+  },
   computed: {
     tasks () {
       var task = this.$store.getters.task
       return task.items
+    },
+    developers () {
+      var arr
+      if (this.$store.getters.form == null) {
+        this.$store.dispatch('getFormFields')
+        .then((r) => {
+          arr = this.$store.getters.form
+        })
+        .catch(() => {})
+      } else {
+        arr = this.$store.getters.form
+      }
+      return arr ? arr.developer.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
     }
   }
 }

@@ -28,6 +28,10 @@ export function MakeNewTask (obj) {
   return axios.post(Settings.host + 'api/tasks/make', obj)
 }
 
+export function MakeNewSubTask (obj) {
+  return axios.post(Settings.host + 'api/subtasks/make', obj)
+}
+
 export function GetTasks () {
   return axios.get(Settings.host + 'api/tasks')
 }
@@ -46,4 +50,12 @@ export function SetCookie (token) {
 
 export function GetCookie () {
   return axios.get(Settings.host + 'api/check-token/' + Cookies.get('Authorization'))
+}
+
+export function GetMessages (name) {
+  return axios.get(Settings.host + 'api/chat/' + name)
+}
+
+export function sendMsg (msg) {
+  return axios.post(Settings.host + 'api/chat/' + msg.chat, msg.msg)
 }
