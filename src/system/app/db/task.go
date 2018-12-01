@@ -62,9 +62,14 @@ func (task *Task) NewTask() []byte {
 		id, _ := lastId.LastInsertId()
 		if task.MakeSlack != 0 {
 			var purpose = "Название: " + task.Name + " Доступы: " + task.Access
-			_, err := slack.NewGroup("task"+strconv.FormatInt(id, 10), purpose)
+			channel, err := slack.NewGroup("task"+strconv.FormatInt(id, 10), purpose)
 			if err != nil {
 				str = auth.JsonResponseByVar("false", "Ошибка при создании задачи "+err.Error())
+				return str
+			}
+			_, err = d.Exec("UPDATE task SET name_slack = " + channel + " WHERE task.id = 20")
+			if err != nil {
+				str = auth.JsonResponseByVar("false", "Ошибка при добавлении id задачи в базу "+err.Error())
 				return str
 			}
 		}
