@@ -54,7 +54,7 @@ func ChatHistory(name string) ([]slack.Message, error) {
 
 	details := slack.HistoryParameters{
 		Count:     1000,
-		Inclusive: true}
+		Inclusive: false}
 	history, err := Slack.API.GetGroupHistory(name, details)
 	msg := history.Messages
 	if err != nil {
