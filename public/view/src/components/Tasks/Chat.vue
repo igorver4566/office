@@ -41,8 +41,8 @@ function onlineChat (store) {
   setTimeout(function run () {
     var chatName = store.getters.task.task.name_slack
     store.dispatch('getMessages', chatName)
-    setTimeout(run, 5000)
-  }, 5000)
+    setTimeout(run, 3000)
+  }, 3000)
 }
 export default {
   data () {
@@ -74,7 +74,6 @@ export default {
       var chatName = this.$store.getters.task.task.name_slack
       var messages = []
       if (chatName !== '' && chatName !== undefined) {
-        this.$store.dispatch('getMessages', chatName)
         messages = this.$store.getters.messages
         messages = messages.map((val) => {
           var ts = val.ts
@@ -87,7 +86,7 @@ export default {
           return val
         })
       }
-      return messages
+      return messages.reverse()
     }
   },
   created () {
