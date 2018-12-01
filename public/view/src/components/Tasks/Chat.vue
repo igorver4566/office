@@ -40,8 +40,10 @@ import VuePerfectScrollbar from 'vue-perfect-scrollbar'
 function onlineChat (store) {
   setTimeout(function run () {
     var chatName = store.getters.task.task.name_slack
-    store.dispatch('getMessages', chatName)
-    setTimeout(run, 3000)
+    if (chatName !== '' && chatName !== undefined) {
+      store.dispatch('getMessages', chatName)
+      setTimeout(run, 3000)
+    }
   }, 3000)
 }
 export default {
