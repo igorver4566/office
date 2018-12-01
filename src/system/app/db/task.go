@@ -67,7 +67,7 @@ func (task *Task) NewTask() []byte {
 				str = auth.JsonResponseByVar("false", "Ошибка при создании задачи "+err.Error())
 				return str
 			}
-			_, err = d.Exec("UPDATE task SET name_slack = " + channel + " WHERE task.id = 20")
+			_, err = d.Exec("UPDATE task SET name_slack = " + channel + " WHERE task.id = " + strconv.FormatInt(id, 10))
 			if err != nil {
 				str = auth.JsonResponseByVar("false", "Ошибка при добавлении id задачи в базу "+err.Error())
 				return str
