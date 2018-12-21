@@ -35,7 +35,7 @@
       </template>
       <template slot="expand" slot-scope="props">
         <v-card flat>
-          <v-card-text><span class="font-weight-bold">Тех. задание</span><br>{{ props.item.message }}</v-card-text>
+          <v-card-text><span class="font-weight-bold">Тех. задание</span><br><div class="white-space-pre">{{ props.item.message }}</div></v-card-text>
         </v-card>
       </template>
     </v-data-table>
@@ -99,12 +99,14 @@
 </template>
 
 <script>
-function getIdFromArray (el) {
-  return (e) => {
+function getIdFromArray (array, el) {
+  var id = 0
+  array.forEach(e => {
     if (e.name === el) {
-      return e.id
+      id = e.id
     }
-  }
+  })
+  return id
 }
 export default {
   props: ['id'],
@@ -167,7 +169,7 @@ export default {
         time_manage: parseInt(this.time_manage),
         message: this.message,
         task_id: parseInt(this.id),
-        user_id: parseInt(arr.developer.map(getIdFromArray(this.developer)).toString())
+        user_id: parseInt(getIdFromArray(arr.developer, this.developer))
       }
       this.$store.dispatch('makeSubTask', task)
           .then(() => {
@@ -181,7 +183,7 @@ export default {
   computed: {
     tasks () {
       var task = this.$store.getters.task
-      return task.items
+      return task.items == null ? [] : task.items
     },
     developers () {
       var arr

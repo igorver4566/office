@@ -163,12 +163,14 @@
 
 <script>
   import tag from './tags.json'
-  function getIdFromArray (el) {
-    return (e) => {
+  function getIdFromArray (array, el) {
+    var id = 0
+    array.forEach(e => {
       if (e.name === el) {
-        return e.id
+        id = e.id
       }
-    }
+    })
+    return id
   }
   export default {
     data () {
@@ -191,9 +193,9 @@
           id: null,
           name: this.name,
           access: this.access,
-          manager_id: parseInt(arr.manager.map(getIdFromArray(this.manager)).toString()),
-          owner_id: parseInt(arr.owner.map(getIdFromArray(this.owner)).toString()),
-          developer_id: parseInt(arr.developer.map(getIdFromArray(this.developer)).toString()),
+          manager_id: parseInt(getIdFromArray(arr.manager, this.manager)),
+          owner_id: parseInt(getIdFromArray(arr.owner, this.owner)),
+          developer_id: parseInt(getIdFromArray(arr.developer, this.developer)),
           tags: this.tags.join(', '),
           make_slack: this.make_slack ? 1 : 0,
           message: this.message,
