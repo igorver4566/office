@@ -26,5 +26,10 @@ services:
 
   vue-build:
     build: ./public/view
+    volumes:
+      - ./hosts:/etc/nginx/conf.d
+      - ./configs:/etc/nginx/sites-available
+      - ./www:/dev/www
+      - ./logs:/dev/log/nginx
     ports:
       - 80:80
