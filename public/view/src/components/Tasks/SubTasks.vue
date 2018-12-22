@@ -5,7 +5,7 @@
       <v-spacer></v-spacer>
       <v-btn 
           flat
-          @click="dialog = true"
+          @click="add()"
         >
         <v-icon>add</v-icon></v-btn>
     </v-card-title>
@@ -34,7 +34,7 @@
           <td class="text-xs-center">
             <v-btn
               flat
-              @click="edit()"
+              @click="edit(props.item.id)"
             >
             <v-icon>border_color</v-icon></v-btn>
           </td>
@@ -49,7 +49,7 @@
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
         <v-card-title>
-          <span class="headline">Создать задачу</span>
+          <span class="headline">{{this.dialog_name}}</span>
         </v-card-title>
         <v-card-text>
           <v-container grid-list-md>
@@ -98,7 +98,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click="dialog = false">Close</v-btn>
-          <v-btn color="blue darken-1" flat @click="onSubmit()">Save</v-btn>
+          <v-btn color="blue darken-1" flat @click="onSubmit(this.save)">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -126,6 +126,8 @@ export default {
       time_manage: '',
       developer: '',
       message: '',
+      save: 'new',
+      dialog_name: 'Создать задачу',
       headers: [
         {
           text: 'ID',
@@ -173,7 +175,13 @@ export default {
     }
   },
   methods: {
-    onSubmit () {
+    onSubmit (type) {
+      var typeDispatch
+      if (type === 'new') {
+        typeDispatch = 'makeSubTask'
+      } else {
+        typeDispatch = 'editSubTask'
+      }
       var arr = this.$store.getters.form
       const task = {
         name: this.name,
@@ -184,7 +192,7 @@ export default {
         task_id: parseInt(this.id),
         user_id: parseInt(getIdFromArray(arr.developer, this.developer))
       }
-      this.$store.dispatch('makeSubTask', task)
+      this.$store.dispatch(typeDispatch, task)
           .then(() => {
             this.dialog = false
             const id = this.id
@@ -192,8 +200,33 @@ export default {
           })
           .catch(() => {})
     },
-    edit () {
-      
+    edit (key) {
+      var tasks = this.$store.getters.task
+      tasks.items.forEach(element => {
+        if (element.id === key) {
+          tasks = element
+        }
+      })
+      this.name = tasks.name
+      this.price = tasks.price
+      this.time_dev = tasks.time_dev
+      this.time_manage = tasks.time_manage
+      this.developer = tasks.user
+      this.message = tasks.message
+      this.save = 'edit'
+      this.dialog_name = 'Редактировать задачу'
+      this.dialog = true
+    },
+    add () {
+      this.dialog = true
+      this.name = ''
+      this.price = ''
+      this.time_dev = ''
+      this.time_manage = ''
+      this.developer = ''
+      this.message = ''
+      this.save = 'new'
+      this.dialog_name = 'Создать задачу'
     }
   },
   computed: {

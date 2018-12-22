@@ -1,4 +1,4 @@
-import {GetSubTasks, MakeNewSubTask} from '@/api/hostsetting.js'
+import {GetSubTasks, MakeNewSubTask, EditSubTask} from '@/api/hostsetting.js'
 
 export default {
   state: {
@@ -41,6 +41,20 @@ export default {
     makeSubTask ({commit}, payload) {
       commit('clearErrorOk')
       MakeNewSubTask(payload)
+      .then((response) => {
+        if (response.data.ok === 'true') {
+          commit('setOk', response.data.data)
+        } else {
+          commit('setError', response.data.data)
+        }
+      })
+      .catch(err => {
+        commit('setError', err)
+      })
+    },
+    editSubTask ({commit}, payload) {
+      commit('clearErrorOk')
+      EditSubTask(payload)
       .then((response) => {
         if (response.data.ok === 'true') {
           commit('setOk', response.data.data)
