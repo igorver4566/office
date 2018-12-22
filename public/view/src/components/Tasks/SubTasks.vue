@@ -78,6 +78,7 @@
                   name="time_dev"
                   v-model="time_dev"
                   label="Время разработчика"
+                  @input="devChange"
                 ></v-text-field>
               </v-flex>
               <v-flex xs12 sm6 md4>
@@ -282,6 +283,10 @@ export default {
       } else {
         this.status_show = key
       }
+    },
+    devChange (e) {
+      this.time_manage = e * 0.25
+      this.price = Math.round(e / 60 * 1100 + this.time_manage / 60 * 800)
     }
   },
   computed: {
