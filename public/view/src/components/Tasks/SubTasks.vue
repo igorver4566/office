@@ -31,6 +31,13 @@
                 {{ props.item.status }}
               </v-chip>
           </td>
+          <td class="text-xs-center">
+            <v-btn
+              flat
+              @click="edit()"
+            >
+            <v-icon>border_color</v-icon></v-btn>
+          </td>
         </tr>
       </template>
       <template slot="expand" slot-scope="props">
@@ -155,6 +162,12 @@ export default {
           align: 'center',
           sortable: false,
           value: 'status'
+        },
+        {
+          text: 'Редактировать',
+          align: 'center',
+          sortable: false,
+          value: 'edit'
         }
       ]
     }
@@ -178,6 +191,9 @@ export default {
             this.$store.dispatch('getTaskById', id)
           })
           .catch(() => {})
+    },
+    edit () {
+      
     }
   },
   computed: {
