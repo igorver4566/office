@@ -7,6 +7,7 @@ import (
 type TaskFormItems struct {
 	Manager   []DevStruct `json:"manager"`
 	Owner     []DevStruct `json:"owner"`
+	Status    []DevStruct `json:"status"`
 	Developer []DevStruct `json:"developer"`
 }
 
@@ -43,6 +44,7 @@ func GetFormItems() interface{} {
 	defer d.Close()
 	items.Manager = selectByName("users", d, "WHERE role_id IN (1, 2)")
 	items.Owner = selectByName("owner", d, "")
+	items.Status = selectByName("status", d, "")
 	items.Developer = selectByName("users", d, "WHERE role_id = 3")
 	return items
 }

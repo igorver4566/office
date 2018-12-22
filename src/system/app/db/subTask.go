@@ -58,6 +58,50 @@ func (subTask *SubTask) NewSubTask() []byte {
 	return str
 }
 
+func (subTask *SubTask) EditSubTasksByID() []byte {
+	var str []byte
+	d := Init()
+	defer d.Close()
+	insert, err := d.Prepare("UPDATE sub_task SET name = ?, price = ?, time_dev = ?, time_manage = ?, message = ?, user_id = ? WHERE id = ?")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer insert.Close()
+	_, err = insert.Exec(subTask.Name,
+		subTask.Price,
+		subTask.TimeDev,
+		subTask.TimeManage,
+		subTask.Message,
+		subTask.UserID,
+		subTask.ID)
+	if err != nil {
+		str = auth.JsonResponseByVar("false", "Ошибка при редактировании задачи"+err.Error())
+	} else {
+		str = auth.JsonResponseByVar("true", "Подзадача успешно отредактирована")
+	}
+	return str
+}
+
+func (subTask *SubTask) EditStatusSubTaskByID() []byte {
+	var str []byte
+	d := Init()
+	defer d.Close()
+	insert, err := d.Prepare("UPDATE sub_task SET status_id = ? WHERE id = ?")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer insert.Close()
+	_, err = insert.Exec(
+		subTask.StatusID,
+		subTask.ID)
+	if err != nil {
+		str = auth.JsonResponseByVar("false", "Ошибка при редактировании статуса задачи"+err.Error())
+	} else {
+		str = auth.JsonResponseByVar("true", "Статус успешно отредактирован")
+	}
+	return str
+}
+
 func GetAllSubTasks() ([]SubTaskReturn, error) {
 	var subTaskArr []SubTaskReturn
 	var subTask SubTaskReturn

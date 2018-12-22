@@ -15,21 +15,34 @@
       hide-actions
     >
       <template slot="items" slot-scope="props">
-        <tr @click="props.expanded = !props.expanded">
+        <tr :key="props.item.id">
           <td>{{ props.item.id }}</td>
-          <td class="text-xs-left">{{ props.item.name }}</td>
+          <td class="text-xs-left" @click="props.expanded = !props.expanded">{{ props.item.name }}</td>
           <td class="text-xs-center">{{ props.item.user }}</td>
           <td class="text-xs-center">{{ props.item.time_dev + props.item.time_manage }} мин.</td>
           <td class="text-xs-center">{{ props.item.price }} руб.</td>
           <td class="text-xs-center">
-            <v-chip
-                class="white--text ml-0"
-                color="green"
-                label
-                small
-              >
+            <v-btn
+              flat
+              @click="show(props.item.id)"
+            >
+              <v-chip
+                  class="white--text ml-0"
+                  :color="greenStatus(props.item.status)"
+                  label
+                  small
+                >
                 {{ props.item.status }}
               </v-chip>
+            </v-btn>
+            <v-select
+                :items="statuses"
+                label="Статус"
+                :satatus_id="props.item.id"
+                :value="props.item.status"
+                v-show="status_show === props.item.id"
+                @change="changeStatus"
+              ></v-select>
           </td>
           <td class="text-xs-center">
             <v-btn
@@ -98,7 +111,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click="dialog = false">Close</v-btn>
-          <v-btn color="blue darken-1" flat @click="onSubmit(this.save)">Save</v-btn>
+          <v-btn color="blue darken-1" flat @click="onSubmit()">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -119,7 +132,10 @@ export default {
   props: ['id'],
   data () {
     return {
+      task_id: 0,
       dialog: false,
+      status: '',
+      status_show: false,
       name: '',
       price: '',
       time_dev: '',
@@ -175,7 +191,9 @@ export default {
     }
   },
   methods: {
-    onSubmit (type) {
+    onSubmit () {
+      var type = this.save
+      var id = this.task_id
       var typeDispatch
       if (type === 'new') {
         typeDispatch = 'makeSubTask'
@@ -184,6 +202,7 @@ export default {
       }
       var arr = this.$store.getters.form
       const task = {
+        id: id === 0 ? 0 : id,
         name: this.name,
         price: parseInt(this.price),
         time_dev: parseInt(this.time_dev),
@@ -207,6 +226,7 @@ export default {
           tasks = element
         }
       })
+      this.task_id = key
       this.name = tasks.name
       this.price = tasks.price
       this.time_dev = tasks.time_dev
@@ -219,6 +239,7 @@ export default {
     },
     add () {
       this.dialog = true
+      this.task_id = 0
       this.name = ''
       this.price = ''
       this.time_dev = ''
@@ -227,6 +248,40 @@ export default {
       this.message = ''
       this.save = 'new'
       this.dialog_name = 'Создать задачу'
+    },
+    changeStatus (e) {
+      var arr = this.$store.getters.form
+      const task = {
+        id: parseInt(this.status_show),
+        status_id: parseInt(getIdFromArray(arr.status, e))
+      }
+      this.$store.dispatch('changeStatusSubTask', task)
+          .then(() => {
+            this.dialog = false
+            const id = this.id
+            this.status_show = 0
+            this.$store.dispatch('getTaskById', id)
+          })
+          .catch(() => {})
+    },
+    greenStatus (key) {
+      switch (key) {
+        case 'Новая':
+          return 'yellow'
+        case 'В работе':
+          return 'blue'
+        case 'Отменена':
+          return 'red'
+        case 'Выполнена':
+          return 'green'
+      }
+    },
+    show (key) {
+      if (this.status_show === key) {
+        this.status_show = 0
+      } else {
+        this.status_show = key
+      }
     }
   },
   computed: {
@@ -246,6 +301,19 @@ export default {
         arr = this.$store.getters.form
       }
       return arr ? arr.developer.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
+    },
+    statuses () {
+      var arr
+      if (this.$store.getters.form == null) {
+        this.$store.dispatch('getFormFields')
+        .then((r) => {
+          arr = this.$store.getters.form
+        })
+        .catch(() => {})
+      } else {
+        arr = this.$store.getters.form
+      }
+      return arr ? arr.status.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
     }
   }
 }

@@ -2,7 +2,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 
 export const Settings = {
-  host: 'http://oftsetters-office.ru:8086/'
+  host: 'http://softsetters-office.ru:8086/'
 }
 
 export function Registration (name, pass, mail) {
@@ -34,6 +34,10 @@ export function MakeNewSubTask (obj) {
 
 export function EditSubTask (obj) {
   return axios.post(Settings.host + 'api/subtasks/edit', obj)
+}
+
+export function ChangeStatusSubTask (obj) {
+  return axios.post(Settings.host + 'api/subtasks/editStatus', obj)
 }
 
 export function GetTasks () {
