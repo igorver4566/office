@@ -16,7 +16,9 @@
     >
       <template slot="items" slot-scope="props">
         <tr :key="props.item.id">
-          <td>{{ props.item.id }}</td>
+          <td @click="props.expanded = !props.expanded">{{ props.item.id }}</td>
+          <td  @click="props.expanded = !props.expanded">{{ props.item.priority }}</td>
+          <td class="text-xs-center" @click="props.expanded = !props.expanded">{{ props.item.dt_create.replace(/[A-Z]/g,' ') }}</td>
           <td class="text-xs-left" @click="props.expanded = !props.expanded">{{ props.item.name }}</td>
           <td class="text-xs-center">{{ props.item.user }}</td>
           <td class="text-xs-center">{{ props.item.time_dev + props.item.time_manage }} мин.</td>
@@ -89,6 +91,14 @@
                 ></v-text-field>
               </v-flex>
               <v-flex xs12>
+                <v-subheader class="pl-0">Always show thumb label</v-subheader>
+                <v-slider
+                  v-model="priority"
+                  thumb-label="always"
+                  max="5"
+                ></v-slider>
+              </v-flex>
+              <v-flex xs12>
                 <v-textarea 
                   box
                   background-color="#fafafa"
@@ -140,6 +150,7 @@ export default {
       name: '',
       price: '',
       time_dev: '',
+      priority: 0,
       time_manage: '',
       developer: '',
       message: '',
@@ -151,6 +162,18 @@ export default {
           align: 'left',
           sortable: true,
           value: 'id'
+        },
+        {
+          text: 'Приоритет',
+          align: 'left',
+          sortable: true,
+          value: 'priority'
+        },
+        {
+          text: 'Дата',
+          align: 'center',
+          sortable: false,
+          value: 'dt_create'
         },
         {
           text: 'Название задачи',
@@ -210,7 +233,8 @@ export default {
         time_manage: parseInt(this.time_manage),
         message: this.message,
         task_id: parseInt(this.id),
-        user_id: parseInt(getIdFromArray(arr.developer, this.developer))
+        user_id: parseInt(getIdFromArray(arr.developer, this.developer)),
+        priority: this.priority
       }
       this.$store.dispatch(typeDispatch, task)
           .then(() => {
@@ -234,6 +258,7 @@ export default {
       this.time_manage = tasks.time_manage
       this.developer = tasks.user
       this.message = tasks.message
+      this.priority = tasks.priority
       this.save = 'edit'
       this.dialog_name = 'Редактировать задачу'
       this.dialog = true
@@ -241,6 +266,7 @@ export default {
     add () {
       this.dialog = true
       this.task_id = 0
+      this.priority = 0
       this.name = ''
       this.price = ''
       this.time_dev = ''

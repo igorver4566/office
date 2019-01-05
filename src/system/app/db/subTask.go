@@ -1,35 +1,41 @@
 package db
 
 import (
+	"fmt"
 	"strconv"
+	"time"
 
 	"../auth"
 )
 
 //SubTask model
 type SubTask struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	Price      int    `json:"price"`
-	TimeDev    int    `json:"time_dev"`
-	TimeManage int    `json:"time_manage"`
-	Message    string `json:"message"`
-	TaskID     int    `json:"task_id"`
-	StatusID   int    `json:"status_id"`
-	UserID     int    `json:"user_id"`
+	ID         int       `json:"id"`
+	Name       string    `json:"name"`
+	Price      int       `json:"price"`
+	TimeDev    int       `json:"time_dev"`
+	TimeManage int       `json:"time_manage"`
+	Message    string    `json:"message"`
+	TaskID     int       `json:"task_id"`
+	StatusID   int       `json:"status_id"`
+	UserID     int       `json:"user_id"`
+	DTCreate   time.Time `json:"dt_create"`
+	Priority   int       `json:"priority"`
 }
 
 //SubTaskReturn model for return to client
 type SubTaskReturn struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	Price      int    `json:"price"`
-	TimeDev    int    `json:"time_dev"`
-	TimeManage int    `json:"time_manage"`
-	Message    string `json:"message"`
-	TaskID     int    `json:"task_id"`
-	Status     string `json:"status"`
-	User       string `json:"user"`
+	ID         int       `json:"id"`
+	Name       string    `json:"name"`
+	Price      int       `json:"price"`
+	TimeDev    int       `json:"time_dev"`
+	TimeManage int       `json:"time_manage"`
+	Message    string    `json:"message"`
+	TaskID     int       `json:"task_id"`
+	Status     string    `json:"status"`
+	User       string    `json:"user"`
+	DTCreate   time.Time `json:"dt_create"`
+	Priority   int       `json:"priority"`
 }
 
 //NewSubTask - make new subtask. Return json {ok: var1, data: var2}
@@ -37,7 +43,7 @@ func (subTask *SubTask) NewSubTask() []byte {
 	var str []byte
 	d := Init()
 	defer d.Close()
-	insert, err := d.Prepare("INSERT INTO sub_task VALUES (NULL, ?, ?, ?, ?, ?, ?, 1, ?)")
+	insert, err := d.Prepare("INSERT INTO sub_task VALUES (NULL, ?, ?, ?, ?, ?, ?, 1, ?, NOW(), ?)")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -48,7 +54,8 @@ func (subTask *SubTask) NewSubTask() []byte {
 		subTask.TimeManage,
 		subTask.Message,
 		subTask.TaskID,
-		subTask.UserID)
+		subTask.UserID,
+		subTask.Priority)
 	if err != nil {
 		str = auth.JsonResponseByVar("false", "Ошибка при создании задачи"+err.Error())
 	} else {
@@ -62,7 +69,7 @@ func (subTask *SubTask) EditSubTasksByID() []byte {
 	var str []byte
 	d := Init()
 	defer d.Close()
-	insert, err := d.Prepare("UPDATE sub_task SET name = ?, price = ?, time_dev = ?, time_manage = ?, message = ?, user_id = ? WHERE id = ?")
+	insert, err := d.Prepare("UPDATE sub_task SET name = ?, price = ?, time_dev = ?, time_manage = ?, message = ?, user_id = ?, priority = ? WHERE id = ?")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -73,6 +80,7 @@ func (subTask *SubTask) EditSubTasksByID() []byte {
 		subTask.TimeManage,
 		subTask.Message,
 		subTask.UserID,
+		subTask.Priority,
 		subTask.ID)
 	if err != nil {
 		str = auth.JsonResponseByVar("false", "Ошибка при редактировании задачи"+err.Error())
@@ -107,17 +115,18 @@ func GetAllSubTasks() ([]SubTaskReturn, error) {
 	var subTask SubTaskReturn
 	d := Init()
 	defer d.Close()
-	rows, err := d.Query("SELECT s.id, s.name, s.price, s.time_dev, s.time_manage, s.message, s.task_id, st.name, u.name FROM sub_task s INNER JOIN status st ON s.status_id = st.id INNER JOIN users u ON s.user_id = u.id ORDER BY s.task_id")
+	rows, err := d.Query("SELECT s.id, s.name, s.price, s.time_dev, s.time_manage, s.message, s.task_id, st.name, u.name, s.dt_create, s.priority FROM sub_task s INNER JOIN status st ON s.status_id = st.id INNER JOIN users u ON s.user_id = u.id ORDER BY s.task_id")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&subTask.ID, &subTask.Name, &subTask.Price, &subTask.TimeDev, &subTask.TimeManage, &subTask.Message, &subTask.TaskID, &subTask.Status, &subTask.User)
+		err := rows.Scan(&subTask.ID, &subTask.Name, &subTask.Price, &subTask.TimeDev, &subTask.TimeManage, &subTask.Message, &subTask.TaskID, &subTask.Status, &subTask.User, &subTask.DTCreate, &subTask.Priority)
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println(subTask.DTCreate)
 		subTaskArr = append(subTaskArr, subTask)
 	}
 	if err = rows.Err(); err != nil {
@@ -131,14 +140,14 @@ func GetSubTasksByTask(id string) ([]SubTaskReturn, error) {
 	var subTask SubTaskReturn
 	d := Init()
 	defer d.Close()
-	rows, err := d.Query("SELECT s.id, s.name, s.price, s.time_dev, s.time_manage, s.message, s.task_id, st.name, u.name FROM sub_task s INNER JOIN status st ON s.status_id = st.id INNER JOIN users u ON s.user_id = u.id WHERE (s.task_id = " + id + ") ORDER BY s.id")
+	rows, err := d.Query("SELECT s.id, s.name, s.price, s.time_dev, s.time_manage, s.message, s.task_id, st.name, u.name, s.dt_create, s.priority FROM sub_task s INNER JOIN status st ON s.status_id = st.id INNER JOIN users u ON s.user_id = u.id WHERE (s.task_id = " + id + ") ORDER BY s.id")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&subTask.ID, &subTask.Name, &subTask.Price, &subTask.TimeDev, &subTask.TimeManage, &subTask.Message, &subTask.TaskID, &subTask.Status, &subTask.User)
+		err := rows.Scan(&subTask.ID, &subTask.Name, &subTask.Price, &subTask.TimeDev, &subTask.TimeManage, &subTask.Message, &subTask.TaskID, &subTask.Status, &subTask.User, &subTask.DTCreate, &subTask.Priority)
 		if err != nil {
 			return nil, err
 		}
