@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -126,7 +125,6 @@ func GetAllSubTasks() ([]SubTaskReturn, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(subTask.DTCreate)
 		subTaskArr = append(subTaskArr, subTask)
 	}
 	if err = rows.Err(); err != nil {
