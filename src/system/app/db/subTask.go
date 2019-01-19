@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -115,12 +116,14 @@ func (subTask *SubTask) EditTimeSubTaskByID() []byte {
 	var str []byte
 	d := Init()
 	defer d.Close()
-	insert, err := d.Prepare("UPDATE sub_task SET true_time = (SELECT true_time FROM sub_task WHERE id = 12)+? WHERE id = ?")
+	insert, err := d.Prepare("UPDATE sub_task SET true_time = (SELECT s.true_time FROM sub_task s WHERE s.id = ?)+? WHERE id = ?")
 	if err != nil {
 		panic(err.Error())
 	}
+	fmt.Println(subTask.TrueTime)
 	defer insert.Close()
 	_, err = insert.Exec(
+		subTask.ID,
 		subTask.TrueTime,
 		subTask.ID)
 	if err != nil {
@@ -160,14 +163,14 @@ func GetSubTasksByTask(id string) ([]SubTaskReturn, error) {
 	var subTask SubTaskReturn
 	d := Init()
 	defer d.Close()
-	rows, err := d.Query("SELECT s.id, s.name, s.price, s.time_dev, s.time_manage, s.message, s.task_id, st.name, u.name, s.dt_create, s.priority FROM sub_task s INNER JOIN status st ON s.status_id = st.id INNER JOIN users u ON s.user_id = u.id WHERE (s.task_id = " + id + ") ORDER BY s.id")
+	rows, err := d.Query("SELECT s.id, s.name, s.price, s.time_dev, s.time_manage, s.message, s.task_id, st.name, u.name, s.dt_create, s.priority, s.true_time FROM sub_task s INNER JOIN status st ON s.status_id = st.id INNER JOIN users u ON s.user_id = u.id WHERE (s.task_id = " + id + ") ORDER BY s.id")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&subTask.ID, &subTask.Name, &subTask.Price, &subTask.TimeDev, &subTask.TimeManage, &subTask.Message, &subTask.TaskID, &subTask.Status, &subTask.User, &subTask.DTCreate, &subTask.Priority)
+		err := rows.Scan(&subTask.ID, &subTask.Name, &subTask.Price, &subTask.TimeDev, &subTask.TimeManage, &subTask.Message, &subTask.TaskID, &subTask.Status, &subTask.User, &subTask.DTCreate, &subTask.Priority, &subTask.TrueTime)
 		if err != nil {
 			return nil, err
 		}

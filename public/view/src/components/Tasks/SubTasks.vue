@@ -46,6 +46,25 @@
                 @change="changeStatus"
               ></v-select>
           </td>
+          <td>
+            <v-btn
+              flat
+              @click="showAddTime(props.item.id)"
+            >
+              {{ props.item.true_time }}
+            </v-btn>
+            <v-layout align-center justify-center v-show="time_show === props.item.id">
+              <v-flex sm6>
+                <v-text-field
+                  name="true_time"
+                  v-model="true_time"
+                ></v-text-field>
+              </v-flex>
+              <v-flex sm6>
+                 <v-icon @click="addTime()">add_box</v-icon>
+              </v-flex>
+            </v-layout>
+          </td>
           <td class="text-xs-center">
             <v-btn
               flat
@@ -91,7 +110,7 @@
                 ></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-subheader class="pl-0">Always show thumb label</v-subheader>
+                <v-subheader class="pl-0">Приоритет</v-subheader>
                 <v-slider
                   v-model="priority"
                   thumb-label="always"
@@ -121,8 +140,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="dialog = false">Close</v-btn>
-          <v-btn color="blue darken-1" flat @click="onSubmit()">Save</v-btn>
+          <v-btn color="blue darken-1" flat @click="dialog = false">Закрыть</v-btn>
+          <v-btn color="blue darken-1" flat @click="onSubmit()">Сохранить</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -147,6 +166,8 @@ export default {
       dialog: false,
       status: '',
       status_show: false,
+      time_show: false,
+      true_time: 0,
       name: '',
       price: '',
       time_dev: '',
@@ -172,7 +193,7 @@ export default {
         {
           text: 'Дата',
           align: 'center',
-          sortable: false,
+          sortable: true,
           value: 'dt_create'
         },
         {
@@ -204,6 +225,12 @@ export default {
           align: 'center',
           sortable: false,
           value: 'status'
+        },
+        {
+          text: 'Факт. время',
+          align: 'center',
+          sortable: false,
+          value: 'true_time'
         },
         {
           text: 'Редактировать',
@@ -291,6 +318,20 @@ export default {
           })
           .catch(() => {})
     },
+    addTime () {
+      const task = {
+        id: parseInt(this.time_show),
+        true_time: parseInt(this.true_time)
+      }
+      this.$store.dispatch('addTrueTimeSubTask', task)
+          .then(() => {
+            this.dialog = false
+            const id = this.id
+            this.time_show = 0
+            this.$store.dispatch('getTaskById', id)
+          })
+          .catch(() => {})
+    },
     greenStatus (key) {
       switch (key) {
         case 'Новая':
@@ -308,6 +349,13 @@ export default {
         this.status_show = 0
       } else {
         this.status_show = key
+      }
+    },
+    showAddTime (key) {
+      if (this.time_show === key) {
+        this.time_show = 0
+      } else {
+        this.time_show = key
       }
     },
     devChange (e) {

@@ -43,6 +43,10 @@ export function ChangeStatusSubTask (obj) {
   return axios.post(Settings.host + 'api/subtasks/editStatus', obj, Settings.auth)
 }
 
+export function TrueTimeSubTask (obj) {
+  return axios.post(Settings.host + 'api/subtasks/editTime', obj, Settings.auth)
+}
+
 export function GetTasks () {
   return axios.get(Settings.host + 'api/tasks', Settings.auth)
 }
