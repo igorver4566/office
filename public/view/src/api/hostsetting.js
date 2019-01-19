@@ -2,7 +2,10 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 
 export const Settings = {
-  host: 'http://softsetters-office.ru:8086/'
+  host: 'http://softsetters-office.ru:8086/',
+  auth: {headers: {
+    Authorization: 'Bearer ' + Cookies.get('Authorization')
+  }}
 }
 
 export function Registration (name, pass, mail) {
@@ -21,35 +24,35 @@ export function Login (name, pass) {
 }
 
 export function GetFormTask () {
-  return axios.get(Settings.host + 'api/tasks/make')
+  return axios.get(Settings.host + 'api/tasks/make', Settings.auth)
 }
 
 export function MakeNewTask (obj) {
-  return axios.post(Settings.host + 'api/tasks/make', obj)
+  return axios.post(Settings.host + 'api/tasks/make', obj, Settings.auth)
 }
 
 export function MakeNewSubTask (obj) {
-  return axios.post(Settings.host + 'api/subtasks/make', obj)
+  return axios.post(Settings.host + 'api/subtasks/make', obj, Settings.auth)
 }
 
 export function EditSubTask (obj) {
-  return axios.post(Settings.host + 'api/subtasks/edit', obj)
+  return axios.post(Settings.host + 'api/subtasks/edit', obj, Settings.auth)
 }
 
 export function ChangeStatusSubTask (obj) {
-  return axios.post(Settings.host + 'api/subtasks/editStatus', obj)
+  return axios.post(Settings.host + 'api/subtasks/editStatus', obj, Settings.auth)
 }
 
 export function GetTasks () {
-  return axios.get(Settings.host + 'api/tasks')
+  return axios.get(Settings.host + 'api/tasks', Settings.auth)
 }
 
 export function GetTaskById (id) {
-  return axios.get(Settings.host + 'api/task/' + id)
+  return axios.get(Settings.host + 'api/task/' + id, Settings.auth)
 }
 
 export function GetSubTasks () {
-  return axios.get(Settings.host + 'api/subtasks')
+  return axios.get(Settings.host + 'api/subtasks', Settings.auth)
 }
 
 export function SetCookie (token) {
@@ -57,13 +60,13 @@ export function SetCookie (token) {
 }
 
 export function GetCookie () {
-  return axios.get(Settings.host + 'api/check-token/' + Cookies.get('Authorization'))
+  return axios.get(Settings.host + 'api/check-token/' + Cookies.get('Authorization'), Settings.auth)
 }
 
 export function GetMessages (name) {
-  return axios.get(Settings.host + 'api/chat/' + name)
+  return axios.get(Settings.host + 'api/chat/' + name, Settings.auth)
 }
 
 export function sendMsg (msg) {
-  return axios.post(Settings.host + 'api/chat/' + msg.chat, msg.msg)
+  return axios.post(Settings.host + 'api/chat/' + msg.chat, msg.msg, Settings.auth)
 }
