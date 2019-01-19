@@ -20,6 +20,7 @@ type SubTask struct {
 	UserID     int       `json:"user_id"`
 	DTCreate   time.Time `json:"dt_create"`
 	Priority   int       `json:"priority"`
+	TrueTime   int       `json:"true_time"`
 }
 
 //SubTaskReturn model for return to client
@@ -35,6 +36,7 @@ type SubTaskReturn struct {
 	User       string    `json:"user"`
 	DTCreate   time.Time `json:"dt_create"`
 	Priority   int       `json:"priority"`
+	TrueTime   int       `json:"true_time"`
 }
 
 //NewSubTask - make new subtask. Return json {ok: var1, data: var2}
@@ -42,7 +44,7 @@ func (subTask *SubTask) NewSubTask() []byte {
 	var str []byte
 	d := Init()
 	defer d.Close()
-	insert, err := d.Prepare("INSERT INTO sub_task VALUES (NULL, ?, ?, ?, ?, ?, ?, 1, ?, NOW(), ?)")
+	insert, err := d.Prepare("INSERT INTO sub_task VALUES (NULL, ?, ?, ?, ?, ?, ?, 1, ?, NOW(), ?, NULL)")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -105,6 +107,26 @@ func (subTask *SubTask) EditStatusSubTaskByID() []byte {
 		str = auth.JsonResponseByVar("false", "Ошибка при редактировании статуса задачи"+err.Error())
 	} else {
 		str = auth.JsonResponseByVar("true", "Статус успешно отредактирован")
+	}
+	return str
+}
+
+func (subTask *SubTask) EditTimeSubTaskByID() []byte {
+	var str []byte
+	d := Init()
+	defer d.Close()
+	insert, err := d.Prepare("UPDATE sub_task SET true_time = (SELECT true_time FROM sub_task WHERE id = 12)+? WHERE id = ?")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer insert.Close()
+	_, err = insert.Exec(
+		subTask.TrueTime,
+		subTask.ID)
+	if err != nil {
+		str = auth.JsonResponseByVar("false", "Ошибка при редактировании времени задачи"+err.Error())
+	} else {
+		str = auth.JsonResponseByVar("true", "Время успешно добавлено")
 	}
 	return str
 }
