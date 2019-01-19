@@ -3,6 +3,7 @@
     <v-card-title primary-title>
       <h3>Задачи</h3>
       <v-spacer></v-spacer>
+      <span v-show="this.$store.getters.userName === 'Администратор'">Сумма за неделю: {{weakSum}} руб.</span>
       <v-btn 
           flat
           @click="add()"
@@ -366,7 +367,17 @@ export default {
   computed: {
     tasks () {
       var task = this.$store.getters.task
-      return task.items == null ? [] : task.items
+      var uName = this.$store.getters.userName
+      if (task.items !== null && uName !== '') {
+        if (uName === 'Администратор') {
+          task = task.items
+        } else {
+          task = task.items.filter(el => el.user === uName)
+        }
+      } else {
+        task = []
+      }
+      return task
     },
     developers () {
       var arr
@@ -393,6 +404,21 @@ export default {
         arr = this.$store.getters.form
       }
       return arr ? arr.status.map((el) => { el = el.name; return el }) : ['Ошибка при загрузке']
+    },
+    weakSum () {
+      var task = this.$store.getters.task
+      var sum = 0
+      if (task.items) {
+        task.items.map((el) => {
+          var dt = new Date(el.dt_create)
+          var now = new Date()
+          now = now.getDate() - (now.getDay() - (7 - now.getDay()))
+          if (dt.getDate() >= now) {
+            sum += el.price
+          }
+        })
+      }
+      return sum
     }
   }
 }
