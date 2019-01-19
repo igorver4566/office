@@ -412,8 +412,8 @@ export default {
         task.items.map((el) => {
           var dt = new Date(el.dt_create)
           var now = new Date()
-          now = now.getDay() !== 0 ? now.getDate() - now.getDay() - 1 : now.getDate() - 7
-          if (dt.getDate() >= now) {
+          now.getDay() !== 0 ? now.setDate(now.getDate() - (now.getDay() - 1)) : now.setDate(now.getDate() - 7)
+          if (dt >= now) {
             sum += el.price
           }
         })
