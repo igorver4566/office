@@ -13,7 +13,7 @@
     <v-data-table
       :headers="headers"
       :items="tasks"
-      hide-actions
+      class="elevation-1"
     >
       <template slot="items" slot-scope="props">
         <tr :key="props.item.id">
