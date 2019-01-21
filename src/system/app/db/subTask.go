@@ -45,7 +45,7 @@ func (subTask *SubTask) NewSubTask() []byte {
 	var str []byte
 	d := Init()
 	defer d.Close()
-	insert, err := d.Prepare("INSERT INTO sub_task VALUES (NULL, ?, ?, ?, ?, ?, ?, 1, ?, NOW(), ?, NULL)")
+	insert, err := d.Prepare("INSERT INTO sub_task VALUES (NULL, ?, ?, ?, ?, ?, ?, 1, ?, NOW(), ?, 0)")
 	if err != nil {
 		panic(err.Error())
 	}
