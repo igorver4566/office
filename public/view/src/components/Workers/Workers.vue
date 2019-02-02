@@ -65,7 +65,7 @@
           hide-actions
         >
           <template slot="items" slot-scope="props">
-            <tr class="tasks_go" @click="toTask(props.item.id)">
+            <tr class="tasks_go">
               <td>{{ props.item.id }}</td>
               <td class="text-xs-left">{{ props.item.name }}</td>
               <td class="text-xs-center">{{ props.item.time}} мин.</td>
