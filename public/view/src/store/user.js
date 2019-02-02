@@ -85,7 +85,6 @@ export default {
       GetWorkers(payload.dt_start, payload.dt_end)
       .then(function (r) {
         if (r.data.ok === 'true') {
-          console.log(r.data)
           commit('setWorkers', r.data.data)
         } else {
           commit('setError', r.data.data)
