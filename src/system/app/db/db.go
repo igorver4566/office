@@ -122,3 +122,36 @@ func GetUserById(id int64, token string) (interface{}, error) {
 	}
 	return user, nil
 }
+
+func GetAllWorkers(dt_start, dt_end string) (interface{}, error) {
+	type UserSubTaskReturn struct {
+		ID       int    `json:"id"`
+		Name     string `json:"name"`
+		Price    int    `json:"price"`
+		Time     int    `json:"time"`
+		TrueTime int    `json:"true_time"`
+	}
+	var UserSubTask UserSubTaskReturn
+	var UserSubTaskArr []UserSubTaskReturn
+	d := Init()
+	defer d.Close()
+	exists, err := d.Prepare("SELECT u.id, u.name, sum(sub.price) as sum_price, (sum(sub.time_dev) + sum(sub.time_manage)) as sum_time, sum(sub.true_time) as sum_true_time FROM users u LEFT JOIN sub_task sub ON u.id = sub.user_id WHERE sub.dt_create > ? AND sub.dt_create < ? AND sub.status_id = 4 GROUP BY u.id")
+	if err != nil {
+		return nil, err
+	}
+	defer exists.Close()
+	rows, err := exists.Query(dt_start, dt_end)
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&UserSubTask.ID, &UserSubTask.Name, &UserSubTask.Price, &UserSubTask.Time, &UserSubTask.TrueTime)
+		if err != nil {
+			return nil, err
+		}
+		UserSubTaskArr = append(UserSubTaskArr, UserSubTask)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return UserSubTaskArr, nil
+}

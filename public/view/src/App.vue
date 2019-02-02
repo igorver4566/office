@@ -80,7 +80,8 @@ export default {
       ],
       items: [
         {title: 'Создать задачу', url: '/make_task'},
-        {title: 'Все задачи', url: '/tasks'}
+        {title: 'Все задачи', url: '/tasks'},
+        {title: 'Сотрудники', url: '/workers'}
       ]
     }
   },

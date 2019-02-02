@@ -1,4 +1,4 @@
-import {Registration, Login, SetCookie, GetCookie} from '@/api/hostsetting.js'
+import {Registration, Login, SetCookie, GetCookie, GetWorkers} from '@/api/hostsetting.js'
 import {WeatherLocation} from '@/api/weather.js'
 
 export default {
@@ -7,7 +7,8 @@ export default {
     userLogin: null,
     userName: null,
     location: 'St. Petersburg',
-    weather: 0
+    weather: 0,
+    workers: []
   },
   mutations: {
     setToken (state, token) {
@@ -20,6 +21,9 @@ export default {
     setUserFields (state, data) {
       state.userLogin = data.login
       state.userName = data.name
+    },
+    setWorkers (state, data) {
+      state.workers = data
     }
   },
   actions: {
@@ -75,6 +79,21 @@ export default {
       }).catch(err => {
         commit('setError', err)
       })
+    },
+    GetAllWorkers ({commit}, payload) {
+      commit('clearErrorOk')
+      GetWorkers(payload.dt_start, payload.dt_end)
+      .then(function (r) {
+        if (r.data.ok === 'true') {
+          console.log(r.data)
+          commit('setWorkers', r.data.data)
+        } else {
+          commit('setError', r.data.data)
+        }
+      })
+      .catch(err => {
+        commit('setError', err)
+      })
     }
   },
   getters: {
@@ -92,6 +111,9 @@ export default {
     },
     weather (state) {
       return state.weather
+    },
+    workers (state) {
+      return state.workers
     }
   }
 }

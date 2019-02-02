@@ -6,6 +6,7 @@ import Register from '@/components/Auth/Register'
 import MakeTask from '@/components/Tasks/MakeTask'
 import Task from '@/components/Tasks/Task'
 import AllTasks from '@/components/Tasks/AllTasks'
+import Workers from '@/components/Workers/Workers'
 
 Vue.use(Router)
 
@@ -42,6 +43,11 @@ export default new Router({
       name: 'task',
       props: true,
       component: Task
+    },
+    {
+      path: '/workers',
+      name: 'workers',
+      component: Workers
     }
   ],
   mode: 'history'

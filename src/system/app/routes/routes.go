@@ -66,6 +66,7 @@ func NewRouter() (r Router) {
 	r.Router.HandleFunc("/api/task/{id}", controller.GetOneTask).Methods("GET")
 	r.Router.HandleFunc("/api/chat/{name}", controller.GetChatHistory).Methods("GET")
 	r.Router.HandleFunc("/api/chat/{name}", controller.PostMessage).Methods("POST")
+	r.Router.HandleFunc("/api/users/workers/{dt_start}/{dt_end}", controller.GetAllWorkers).Methods("GET")
 	r.Router.Use(LoggingMiddleware)
 	return
 }

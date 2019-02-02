@@ -74,3 +74,7 @@ export function GetMessages (name) {
 export function sendMsg (msg) {
   return axios.post(Settings.host + 'api/chat/' + msg.chat, msg.msg, Settings.auth)
 }
+
+export function GetWorkers (start, end) {
+  return axios.get(Settings.host + 'api/users/workers/' + start + '/' + end, Settings.auth)
+}
