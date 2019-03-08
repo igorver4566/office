@@ -6,6 +6,7 @@ import Register from '@/components/Auth/Register'
 import MakeTask from '@/components/Tasks/MakeTask'
 import Task from '@/components/Tasks/Task'
 import AllTasks from '@/components/Tasks/AllTasks'
+import AllSubTasks from '@/components/Tasks/AllSubTasks'
 import Workers from '@/components/Workers/Workers'
 
 Vue.use(Router)
@@ -37,6 +38,11 @@ export default new Router({
       path: '/tasks',
       name: 'tasks',
       component: AllTasks
+    },
+    {
+      path: '/subtasks',
+      name: 'subtask',
+      component: AllSubTasks
     },
     {
       path: '/task/:id',
